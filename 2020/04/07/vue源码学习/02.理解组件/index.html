@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue,源码,读书笔记,框架设计," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="判断参数的写法史诗级疑惑，今天解决了，具体看例子就懂了 123456789var b &#x3D; &amp;#123;    &#x2F;&#x2F; a:1&amp;#125;var a &#x3D; b &#x3D;&#x3D; 2 || (a&#x3D;1);console.log(a)  &#x2F;&#x2F; 1var b &#x3D; 1 &#x2F;&#x2F; 无论基本类型还是引用类型，都要有定义才可以var a &#x3D; b &#x3D;&#x3D; 2 || (a&#x3D;1);console.log(a)  &#x2F;&#x2F; 1  组件的定义模板引擎">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解组件">
+<meta property="og:url" content="http://yoursite.com/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/02.%E7%90%86%E8%A7%A3%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="判断参数的写法史诗级疑惑，今天解决了，具体看例子就懂了 123456789var b &#x3D; &amp;#123;    &#x2F;&#x2F; a:1&amp;#125;var a &#x3D; b &#x3D;&#x3D; 2 || (a&#x3D;1);console.log(a)  &#x2F;&#x2F; 1var b &#x3D; 1 &#x2F;&#x2F; 无论基本类型还是引用类型，都要有定义才可以var a &#x3D; b &#x3D;&#x3D; 2 || (a&#x3D;1);console.log(a)  &#x2F;&#x2F; 1  组件的定义模板引擎">
+<meta property="article:published_time" content="2020-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-25T06:13:38.784Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="读书笔记">
+<meta property="article:tag" content="框架设计">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/07/vue源码学习/02.理解组件/"/>
+
+
+
+
+
+  <title>理解组件 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/02.%E7%90%86%E8%A7%A3%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">理解组件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-07T00:00:00+08:00">
+                2020-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  838
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="判断参数的写法"><a href="#判断参数的写法" class="headerlink" title="判断参数的写法"></a>判断参数的写法</h3><p>史诗级疑惑，今天解决了，具体看例子就懂了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b = &#123;</span><br><span class="line">    <span class="comment">// a:1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a = b == <span class="number">2</span> || (a=<span class="number">1</span>);</span><br><span class="line"><span class="built_in">console</span>.log(a)  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = <span class="number">1</span> <span class="comment">// 无论基本类型还是引用类型，都要有定义才可以</span></span><br><span class="line"><span class="keyword">var</span> a = b == <span class="number">2</span> || (a=<span class="number">1</span>);</span><br><span class="line"><span class="built_in">console</span>.log(a)  <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="组件的定义"><a href="#组件的定义" class="headerlink" title="组件的定义"></a>组件的定义</h3><h4 id="模板引擎的年代"><a href="#模板引擎的年代" class="headerlink" title="模板引擎的年代"></a>模板引擎的年代</h4><p>这个我用的比较多（其实很少），模板引擎将字符串转成模板生成器，然后加上数据变成html字符串输出到页面上</p>
+<p>模板+数据=html字符串</p>
+<h3 id="如今"><a href="#如今" class="headerlink" title="如今"></a>如今</h3><p>模板+数据=虚拟DOM(Virtual DOM)</p>
+<p>再用虚拟DOM替换(patch)真实的html（不是真实替换）</p>
+<p>当数据变化的时候，重新产出新的虚拟DOM替换</p>
+<h3 id="使用Virtual-DOM的原因"><a href="#使用Virtual-DOM的原因" class="headerlink" title="使用Virtual DOM的原因"></a>使用Virtual DOM的原因</h3><p>为什么用虚拟DOM不用html，因为虚拟DOM带来了抽象的接入点，可以实现分层设计，也正是这个设计，可以渲染到除网页之外的地方去，例如手机等，理解是这样的，反正我生成对应的虚拟dom，最后一步看不同的平台不同的方法挂载上去</p>
+<p>至于虚拟DOM的性能，肯定是比不上原生的，但是抽象是程序员最大的武器</p>
+<h2 id="Virtual-DOM"><a href="#Virtual-DOM" class="headerlink" title="Virtual DOM"></a>Virtual DOM</h2><h3 id="如何表示"><a href="#如何表示" class="headerlink" title="如何表示"></a>如何表示</h3><p>比较普通一点的想法，我们用一个对象描述这个dom的特点，然后通过render方法挂载到页面上，render方法也比较简单</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  mountElement(vnode, container)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountElement</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 创建元素</span></span><br><span class="line">  <span class="keyword">const</span> el = <span class="built_in">document</span>.createElement(vnode.tag)</span><br><span class="line">  <span class="comment">// 将元素添加到容器</span></span><br><span class="line">  container.appendChild(el)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就两个参数，一个你描述vnode的对象，一个你要挂载的地方嘛，然后根据你的vnode插入</p>
+<p>但是我们的vndom一般都很复杂这里的render只是最基础的一层，再次抽象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用tag表示标签名</span></span><br><span class="line"><span class="keyword">const</span> elementVnode = &#123;</span><br><span class="line">  tag: <span class="string">'div'</span>  <span class="comment">//这是html自带的标签</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> componentVnode = &#123;</span><br><span class="line">  tag: MyComponent  <span class="comment">// 自己定义的标签</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// render判断是不是原生的，走不同的挂载方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> vnode.tag === <span class="string">'string'</span>) &#123;</span><br><span class="line">    <span class="comment">// html 标签</span></span><br><span class="line">    mountElement(vnode, container)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 组件</span></span><br><span class="line">    mountComponent(vnode, container)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 组件的挂载方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountComponent</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 创建组件实例</span></span><br><span class="line">  <span class="keyword">const</span> instance = <span class="keyword">new</span> vnode.tag()</span><br><span class="line">  <span class="comment">// 渲染</span></span><br><span class="line">  instance.$vnode = instance.render()</span><br><span class="line">  <span class="comment">// 挂载</span></span><br><span class="line">  mountElement(instance.$vnode, container)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 可以看到是走的模板引擎那套</span></span><br></pre></td></tr></table></figure>
+
+<p>这里要思考一个问题，使用tag分开的意义</p>
+<p>我的思考：还是那句，抽象是最大的武器，我一个vnode可以有很多的标签在里面的，统一成一个组件再一起挂载，是一个比较好的选择</p>
+<p>也就是我我这个vnode里面可能有很多东西，到最后直接就是html标签，这样写可以不管是一个真实的dom还是vnode都key挂载到</p>
+<h3 id="组件的种类"><a href="#组件的种类" class="headerlink" title="组件的种类"></a>组件的种类</h3><p>设计了两种方式描述组件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通的函数  </span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params">props</span>) </span>&#123;&#125;</span><br><span class="line"><span class="comment">// 一个类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>他们分别是函数式组件与状态组件</p>
+<ul>
+<li>函数式组件(Functional component)        <ul>
+<li>一个纯函数</li>
+<li>没有自身状态，只接受外部数据</li>
+<li>单纯函数调用产出vnode</li>
+</ul>
+</li>
+<li>状态组件(Stateful component)<ul>
+<li>是一个类，可实例化</li>
+<li>有自身状态</li>
+<li>要实例化，再调用render函数产出vnode</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>因为放网上了，还是放原链接</p>
+<p><a href="http://hcysun.me/vue-design/zh/" target="_blank" rel="noopener">http://hcysun.me/vue-design/zh/</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue/" rel="tag"># vue</a>
+          
+            <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+          
+            <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          
+            <a href="/tags/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/" rel="tag"># 框架设计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/03.%E8%AE%BE%E8%AE%A1vnode/" rel="next" title="设计vnode">
+                <i class="fa fa-chevron-left"></i> 设计vnode
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/07/js/js%E4%B8%AD%E7%9A%84%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="prev" title="js中的位运算">
+                js中的位运算 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#判断参数的写法"><span class="nav-number">1.</span> <span class="nav-text">判断参数的写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件的定义"><span class="nav-number">2.</span> <span class="nav-text">组件的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模板引擎的年代"><span class="nav-number">2.1.</span> <span class="nav-text">模板引擎的年代</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如今"><span class="nav-number">3.</span> <span class="nav-text">如今</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Virtual-DOM的原因"><span class="nav-number">4.</span> <span class="nav-text">使用Virtual DOM的原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Virtual-DOM"><span class="nav-number"></span> <span class="nav-text">Virtual DOM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何表示"><span class="nav-number">1.</span> <span class="nav-text">如何表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件的种类"><span class="nav-number">2.</span> <span class="nav-text">组件的种类</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

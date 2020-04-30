@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="js,技术," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="原文地址  https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;5c40484bf265da61171cfb4d#comment  先放原文，因为这个东西就不是现在的我能误出来的，先放原文 for  offorof在js中最常用的就是遍历数组，其实也可以遍历String、Maps、Sets、arguents，但是除了对象，没错就是除了对象 对象一般用 123for (var key in xxx) &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js中的循环">
+<meta property="og:url" content="http://yoursite.com/2020/04/28/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="原文地址  https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;5c40484bf265da61171cfb4d#comment  先放原文，因为这个东西就不是现在的我能误出来的，先放原文 for  offorof在js中最常用的就是遍历数组，其实也可以遍历String、Maps、Sets、arguents，但是除了对象，没错就是除了对象 对象一般用 123for (var key in xxx) &amp;#">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/Snipaste_2020-04-29_20-14-13.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588166069&Signature=gyydaCFtEZB6KE9BoI801WS41ow%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/Snipaste_2020-04-29_20-19-40.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588166399&Signature=Puf761BrBBAOm8354yEqUxo8FhU%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E8%A1%A8%E6%83%85%E5%8C%85/119042e9166f0e7c60df59d765b72197_t.gif?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588168605&Signature=LSGnttkAxTQFKoOxaHhsTiJsgHw%253D">
+<meta property="article:published_time" content="2020-04-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-30T00:44:06.769Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/Snipaste_2020-04-29_20-14-13.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588166069&Signature=gyydaCFtEZB6KE9BoI801WS41ow%253D">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/28/js/js中的循环/"/>
+
+
+
+
+
+  <title>js中的循环 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/28/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">js中的循环</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-28T00:00:00+08:00">
+                2020-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  912
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文地址</p>
+<blockquote>
+<p><a href="https://juejin.im/post/5c40484bf265da61171cfb4d#comment" target="_blank" rel="noopener">https://juejin.im/post/5c40484bf265da61171cfb4d#comment</a></p>
+</blockquote>
+<p>先放原文，因为这个东西就不是现在的我能误出来的，先放原文</p>
+<h2 id="for-of"><a href="#for-of" class="headerlink" title="for  of"></a>for  of</h2><p>forof在js中最常用的就是遍历数组，其实也可以遍历String、Maps、Sets、arguents，但是除了对象，没错就是除了对象</p>
+<p>对象一般用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> xxx) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="类数组对象"><a href="#类数组对象" class="headerlink" title="类数组对象"></a>类数组对象</h3><p>上面的原因是for  of只能用于遍历类数组对象，什么是类数组对象呢，简单理解是key是012等数字的对象，其实不然</p>
+<p>是因为他们都实现了iteratorr</p>
+<p>iterator是个什么东西，来看看</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/Snipaste_2020-04-29_20-14-13.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588166069&Signature=gyydaCFtEZB6KE9BoI801WS41ow%3D" alt="Gj87TK.png"></p>
+<p>可以看到是写在原型链里面的，再看看这个方法里面有什么</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/js/js%E4%B8%AD%E7%9A%84%E5%BE%AA%E7%8E%AF/Snipaste_2020-04-29_20-19-40.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588166399&Signature=Puf761BrBBAOm8354yEqUxo8FhU%3D" alt=""></p>
+<p>啊哈，有个next方法，执行他</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iterator.next(); <span class="comment">// 输出 &#123;value: 1, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// 输出 &#123;value: 2, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// 输出 &#123;value: 3, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// 输出 &#123;value: undefined, done: true&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到他轮着把下标输出了，而done代表是否循环结束的标志</p>
+<p>最后超出下标的话，他直接把done标志为true，然后下标输出为undefined</p>
+<p>为什么这样设计？</p>
+<p>因为这是迭代器协议呀<code>The iterator protocol</code>（迭代协议）</p>
+<p>说明这个迭代器是根据迭代协议设计的，那没事了</p>
+<p>我们回头看我们js的对象里面是没有迭代器的，所以他不能循环</p>
+<p>那么问题来了，为什么不给对象装一个迭代器</p>
+<h2 id="object为什么没有迭代器"><a href="#object为什么没有迭代器" class="headerlink" title="object为什么没有迭代器"></a>object为什么没有迭代器</h2><p>因为没必要，我们有forin可以遍历key了呀</p>
+<p>为什么说没必要，我们遍历一个对象的时候，想要的是什么</p>
+<ul>
+<li>一是遍历他的属性</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	a:<span class="number">1</span>,</span><br><span class="line">	b:<span class="number">2</span>,</span><br><span class="line">	c:<span class="number">3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我想把abc的值都拿到，就是遍历他的属性</p>
+<ul>
+<li>而是遍历数据，这就是我们一般遍历的数组【0,5,8,9】，我们关心他的数据，而不是他的下标嘛（其实有的情况我们也会关心）</li>
+</ul>
+<p>所以forof用来解决第二种，forin我们用来解决第一种</p>
+<h2 id="Generators"><a href="#Generators" class="headerlink" title="Generators"></a>Generators</h2><p>es6的写法，用来实例化出一个iterator，并且可以配合yield语句来中断代码的执行，因为是一个迭代器，就是会有next啦</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">gen</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">yield</span>* gen2();</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">gen2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> <span class="number">4</span>;</span><br><span class="line">  <span class="keyword">yield</span> <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> iterator = gen();</span><br><span class="line"><span class="built_in">console</span>.log(iterator.next()); <span class="comment">// &#123;value:1,don:false&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(iterator.next());<span class="comment">// &#123;value:4,don:false&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(iterator.next());<span class="comment">// &#123;value:5,don:false&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(iterator.next());<span class="comment">// &#123;value:undefined,don:true&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里是一个嵌套Generators的写法，可以看到，他进了第二个里面，还是被yield停止啦，</p>
+<p>同时我们可以注意到，return停止了整个genreator</p>
+<h2 id="generator的应用"><a href="#generator的应用" class="headerlink" title="generator的应用"></a>generator的应用</h2><p>es6加这个是为了干嘛，当然是为了异步啦</p>
+<p>假设我们有两个异步函数a与b，b的参数是a的返回值，如果a没有执行结束，我们不能执行b</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">effect</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; param &#125; = <span class="keyword">yield</span> A();</span><br><span class="line">  <span class="keyword">const</span> &#123; result &#125; = <span class="keyword">yield</span> B(param);</span><br><span class="line">  <span class="built_in">console</span>.table(result);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> iterator = effect()</span><br><span class="line">iterator.next()</span><br><span class="line">iterator.next()</span><br></pre></td></tr></table></figure>
+
+<p>这种写法就会在a执行完再执行b</p>
+<p>但是我们这样不会太笨b了吗，要自己next他，我们可以包装他一下的嘛</p>
+<h2 id="语法糖async-await"><a href="#语法糖async-await" class="headerlink" title="语法糖async/await"></a>语法糖async/await</h2><p>这是es6提供的，返回是一个promise，内部有一个generator的哦</p>
+<p>用法是这样的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getStockPriceByName</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> symbol = <span class="keyword">await</span> getStockSymbol(name);</span><br><span class="line">  <span class="keyword">const</span> stockPrice = <span class="keyword">await</span> getStockPrice(symbol);</span><br><span class="line">  <span class="keyword">return</span> stockPrice;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">getStockPriceByName(<span class="string">'goog'</span>).then(<span class="function"><span class="keyword">function</span> (<span class="params">result</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>因为有promise，可以用then的写法，看起来就好看多啦,同时也是包含了generator哒！</p>
+<p>其实我们最常用的就是这个哒2</p>
+<p>今天的学习就到这里哒</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E8%A1%A8%E6%83%85%E5%8C%85/119042e9166f0e7c60df59d765b72197_t.gif?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588168605&Signature=LSGnttkAxTQFKoOxaHhsTiJsgHw%3D" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag"># js</a>
+          
+            <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/28/%E9%9D%A2%E8%AF%95/yck-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%98%AF%E6%80%8E%E4%B9%88%E6%B8%B2%E6%9F%93%E7%9A%84/" rel="next" title="浏览器是怎么选软的">
+                <i class="fa fa-chevron-left"></i> 浏览器是怎么选软的
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/29/%E9%9D%A2%E8%AF%95/yck-js%E5%BC%82%E6%AD%A5/" rel="prev" title="js异步">
+                js异步 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#for-of"><span class="nav-number">1.</span> <span class="nav-text">for  of</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类数组对象"><span class="nav-number">1.1.</span> <span class="nav-text">类数组对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#object为什么没有迭代器"><span class="nav-number">2.</span> <span class="nav-text">object为什么没有迭代器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generators"><span class="nav-number">3.</span> <span class="nav-text">Generators</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generator的应用"><span class="nav-number">4.</span> <span class="nav-text">generator的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语法糖async-await"><span class="nav-number">5.</span> <span class="nav-text">语法糖async&#x2F;await</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="js,面试," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="来源：https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;5e57048b6fb9a07cc845a9ef  就是当面试的时候叫你手写代码，你要注意的注意事项 起名字与具体功能考虑应该要考虑的点  代码规范（大小写） 函数名称直接使用功能名 传递的参数，不用考虑太多，例如数组直接arr1或者arr+功能名称搞定  新变量与返回值看完题，可以看下是否需要声明新变量，需要返回的结果与结果类型  如果要返回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试中手写代码">
+<meta property="og:url" content="http://yoursite.com/2020/04/06/%E9%9D%A2%E8%AF%95/%E9%9D%A2%E8%AF%95%E4%B8%AD%E6%89%8B%E5%86%99%E4%BB%A3%E7%A0%81/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="来源：https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;5e57048b6fb9a07cc845a9ef  就是当面试的时候叫你手写代码，你要注意的注意事项 起名字与具体功能考虑应该要考虑的点  代码规范（大小写） 函数名称直接使用功能名 传递的参数，不用考虑太多，例如数组直接arr1或者arr+功能名称搞定  新变量与返回值看完题，可以看下是否需要声明新变量，需要返回的结果与结果类型  如果要返回">
+<meta property="article:published_time" content="2020-04-06T12:55:43.000Z">
+<meta property="article:modified_time" content="2020-04-25T06:13:38.814Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/06/面试/面试中手写代码/"/>
+
+
+
+
+
+  <title>面试中手写代码 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/06/%E9%9D%A2%E8%AF%95/%E9%9D%A2%E8%AF%95%E4%B8%AD%E6%89%8B%E5%86%99%E4%BB%A3%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">面试中手写代码</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-06T20:55:43+08:00">
+                2020-04-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>来源：<a href="https://juejin.im/post/5e57048b6fb9a07cc845a9ef" target="_blank" rel="noopener">https://juejin.im/post/5e57048b6fb9a07cc845a9ef</a></p>
+</blockquote>
+<p>就是当面试的时候叫你手写代码，你要注意的注意事项</p>
+<h3 id="起名字与具体功能考虑"><a href="#起名字与具体功能考虑" class="headerlink" title="起名字与具体功能考虑"></a>起名字与具体功能考虑</h3><p>应该要考虑的点</p>
+<ul>
+<li>代码规范（大小写）</li>
+<li>函数名称直接使用功能名</li>
+<li>传递的参数，不用考虑太多，例如数组直接arr1或者arr+功能名称搞定</li>
+</ul>
+<h3 id="新变量与返回值"><a href="#新变量与返回值" class="headerlink" title="新变量与返回值"></a>新变量与返回值</h3><p>看完题，可以看下是否需要声明新变量，需要返回的结果与结果类型</p>
+<ul>
+<li>如果要返回数组，是在一开始声明一个数组，还是用map、filter函数</li>
+<li>对象深拷贝，返回一个拷贝后的对象，是怎初期声明一个空对象，然后返回处理过的 </li>
+<li>在可以不声明变量或者声明新变量都可以解决的情况下，就不用考虑这么多空间复杂度与时间复杂度的优化了，先写了，面试官问优化再写</li>
+</ul>
+<h3 id="考虑用循环还是递归"><a href="#考虑用循环还是递归" class="headerlink" title="考虑用循环还是递归"></a>考虑用循环还是递归</h3><h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><h5 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h5><p>这个太熟，不写</p>
+<h5 id="for-in-循环"><a href="#for-in-循环" class="headerlink" title="for in 循环"></a>for in 循环</h5><p>主要用于遍历对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for (keys in object)</span><br></pre></td></tr></table></figure>
+
+<p>要注意for…in连原型链上的属性也能读取，可以使用hasOwnProperty(keys)== true判断，true就是不是原型链上的</p>
+<h5 id="for-of-循环"><a href="#for-of-循环" class="headerlink" title="for of 循环"></a>for of 循环</h5><p>可以遍历所有部署了Symbol.iterator(迭代器)的数据结构，for…of调用的是内部的Symbol.iterator方法</p>
+<h4 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h4><blockquote>
+<p><a href="https://juejin.im/post/5d85cda3f265da03b638e918" target="_blank" rel="noopener">https://juejin.im/post/5d85cda3f265da03b638e918</a></p>
+</blockquote>
+<h3 id="考虑界限"><a href="#考虑界限" class="headerlink" title="考虑界限"></a>考虑界限</h3><p>一般题目用到循环的话，都要考虑下判定条件，其中还有类型的判断条件</p>
+<h4 id="类型判断"><a href="#类型判断" class="headerlink" title="类型判断"></a>类型判断</h4><h5 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h5><p>普通的通过typeof判断</p>
+<ul>
+<li>对null判断有误差，得到object（bug来的，null不是object）</li>
+<li>对于object对象的类型区分不够，无法区分数组等，除了函数</li>
+</ul>
+<h5 id="instanceof"><a href="#instanceof" class="headerlink" title="instanceof"></a>instanceof</h5><p>测试构造函数的prototype是否出现在被检测对象的原型链上</p>
+<ul>
+<li>无法区分普通对象与array，例如我一个array.instanceof数组或者对象都是true，无法再细分（但是不是array的去instanceof数组都是可以分出哦）</li>
+</ul>
+<h5 id="Object-prototype-toString-call"><a href="#Object-prototype-toString-call" class="headerlink" title="Object.prototype.toString.call()"></a>Object.prototype.toString.call()</h5><p>完美方法</p>
+<ul>
+<li>用Object.prototype.toString()方法，然后改变他的this指向为我们要验证的类型</li>
+<li>能够判断原始类型是因为他里面有包装</li>
+<li>能够判断null与undefined是因为内部有做处理</li>
+</ul>
+<h5 id="Array-isArray"><a href="#Array-isArray" class="headerlink" title="Array.isArray()"></a>Array.isArray()</h5><p>判断参数是否为数组</p>
+<h4 id="空值判断"><a href="#空值判断" class="headerlink" title="空值判断"></a>空值判断</h4><h5 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h5><p>数组判断的话就是length=0</p>
+<h5 id="json对象"><a href="#json对象" class="headerlink" title="json对象"></a>json对象</h5><p>转换为字符串，然后看是否等于’{}’</p>
+<h5 id="for…in循环判断对象"><a href="#for…in循环判断对象" class="headerlink" title="for…in循环判断对象"></a>for…in循环判断对象</h5><p>可以用for…in的就是对象咯</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">judgeObj</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">judgeObj(obj); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="Object-keys"><a href="#Object-keys" class="headerlink" title="Object.keys()"></a>Object.keys()</h5><p>同样是有返回就就是对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="built_in">Object</span>.keys(obj).length === <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="直接使用对象属性判断"><a href="#直接使用对象属性判断" class="headerlink" title="直接使用对象属性判断"></a>直接使用对象属性判断</h5><p>前提是确定obj不为空，一定会包含name属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">obj &amp;&amp; obj.name ? <span class="string">'不为空'</span> : <span class="string">'为空'</span>; <span class="comment">// 三元表达式操作</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="等号使用"><a href="#等号使用" class="headerlink" title="等号使用"></a>等号使用</h4><h5 id="双等号比较过程"><a href="#双等号比较过程" class="headerlink" title="双等号比较过程"></a>双等号比较过程</h5><ul>
+<li><p>如果两个值类型相同，再进行三等号比较</p>
+</li>
+<li><p>如果两个值类型不同，也有可能相同，因为会有默认类型转换</p>
+<ul>
+<li>null与undefined相等</li>
+<li>如果一个是字符串，一个是数值，把字符串转为数值再进行比较</li>
+</ul>
+</li>
+</ul>
+<h5 id="三等号比较过程"><a href="#三等号比较过程" class="headerlink" title="三等号比较过程"></a>三等号比较过程</h5><ul>
+<li>如果类型不同，就一定不相等</li>
+<li>如果两个都是数值并同值，那么相等，如果其中至少一个是NaN，那么不相等</li>
+<li>如果两个都是字符串，每个位置的字符都一样，那么相等，否则不相等</li>
+<li>如果两个都是true或是false，那么相等</li>
+<li>如果两个值引用同一个对象或者函数，那么相等，否则不相等</li>
+<li>如果两个值都是null或者undefined，那么相等</li>
+</ul>
+<h3 id="数组常用函数"><a href="#数组常用函数" class="headerlink" title="数组常用函数"></a>数组常用函数</h3><h4 id="Array-splice-begin-deleteCount-addItem1-addItem2…"><a href="#Array-splice-begin-deleteCount-addItem1-addItem2…" class="headerlink" title="Array.splice(begin, deleteCount, addItem1, addItem2…)"></a>Array.splice(begin, deleteCount, addItem1, addItem2…)</h4><ul>
+<li>改变源数组</li>
+<li>可以向数组添加新元素</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line"><span class="keyword">var</span> b = arr.splice(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"><span class="comment">// a: [1,4,5]</span></span><br><span class="line"><span class="comment">// b: [2,3]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = arr.splice(<span class="number">1</span>,<span class="number">2</span>,<span class="number">777</span>,<span class="number">888</span>)</span><br><span class="line"><span class="comment">// a: [1,777,888,4,5]</span></span><br><span class="line"><span class="comment">// b: [2,3]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Array-slice-start-end"><a href="#Array-slice-start-end" class="headerlink" title="Array.slice([start[, end]])"></a>Array.slice([start[, end]])</h4><ul>
+<li>不改变原数组，创建新数组，将一部分元素浅复制到新的数组对象，并返回</li>
+<li>end是不包进去的</li>
+<li>直接空参数就是复制了一个新的数组</li>
+<li>浅复制指的是如果遇到不是基础类型的对象，知识复制引用而已</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> array = [<span class="string">"one"</span>, <span class="string">"two"</span>, <span class="string">"three"</span>,<span class="string">"four"</span>, <span class="string">"five"</span>];</span><br><span class="line"><span class="built_in">console</span>.log(array.slice()); <span class="comment">// ["one", "two", "three","four", "five"]</span></span><br><span class="line"><span class="built_in">console</span>.log(array.slice(<span class="number">2</span>,<span class="number">3</span>)); <span class="comment">// ["three"]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一个参数为负数，代表错length+start位置开始复制，那么end的参数是比第一个参数少的值（就是倒过来复制）</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>].slice(<span class="number">-1</span>));<span class="comment">//[3]</span></span><br><span class="line"><span class="comment">// -1直接拿了最后一个值</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="Array-join-‘xxx’"><a href="#Array-join-‘xxx’" class="headerlink" title="Array.join(‘xxx’)"></a>Array.join(‘xxx’)</h5><ul>
+<li>将所有元素连接一个字符串咯</li>
+</ul>
+<h4 id="push、concat、indexOf"><a href="#push、concat、indexOf" class="headerlink" title="push、concat、indexOf"></a>push、concat、indexOf</h4><ul>
+<li>push末尾加数</li>
+<li>concat合并两个数组或元素并返回</li>
+<li>indexOf查找元素在数组中第一次出现的索引，没有返回-1</li>
+</ul>
+<h5 id="Array-includes-element-fromIndex-0"><a href="#Array-includes-element-fromIndex-0" class="headerlink" title="Array.includes(element, fromIndex=0)"></a>Array.includes(element, fromIndex=0)</h5><ul>
+<li>es7的方法</li>
+<li>判断当前数组是否有指定的值，是返回true，否返回false</li>
+<li>formindex为开始查找的位置索引</li>
+</ul>
+<h3 id="字符串常用函数"><a href="#字符串常用函数" class="headerlink" title="字符串常用函数"></a>字符串常用函数</h3><h4 id="String-split-element"><a href="#String-split-element" class="headerlink" title="String.split(element)"></a>String.split(element)</h4><ul>
+<li>不改变原始字符串</li>
+<li>根据给的值分割成数组</li>
+</ul>
+<h4 id="String-substr-start-length"><a href="#String-substr-start-length" class="headerlink" title="String.substr(start[, length])"></a>String.substr(start[, length])</h4><ul>
+<li>返回指定位置开始指定数量的字符串</li>
+<li>start一样有正有负，负值表示从length+start开始</li>
+</ul>
+<h3 id="对象的常用函数"><a href="#对象的常用函数" class="headerlink" title="对象的常用函数"></a>对象的常用函数</h3><h4 id="Object-prototype-hasOwnProperty-prop"><a href="#Object-prototype-hasOwnProperty-prop" class="headerlink" title="Object.prototype.hasOwnProperty(prop)"></a>Object.prototype.hasOwnProperty(prop)</h4><ul>
+<li>判断是否为自身属性，是返回true，原型链中的或者不存在的返回false</li>
+</ul>
+<h4 id="Object-create-obj-descr"><a href="#Object-create-obj-descr" class="headerlink" title="Object.create(obj,descr)"></a>Object.create(obj,descr)</h4><ul>
+<li>创建一个新对象，并为他设置原型</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> parent = &#123;<span class="attr">hi</span>: <span class="string">'Hello'</span>&#125;;</span><br><span class="line"><span class="keyword">var</span> o = <span class="built_in">Object</span>.create(parent, &#123;</span><br><span class="line">    prop: &#123;</span><br><span class="line">        value: <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">o.hi; <span class="comment">// 'Hello'</span></span><br><span class="line"><span class="comment">// 获得它的原型</span></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(parent) === <span class="built_in">Object</span>.prototype; <span class="comment">// true 说明parent的原型是Object.prototype</span></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(o); <span class="comment">// &#123;hi: "Hello"&#125; // 说明o的原型是&#123;hi: "Hello"&#125;</span></span><br><span class="line">o.hasOwnProperty(<span class="string">'hi'</span>); <span class="comment">// false 说明hi是原型上的</span></span><br><span class="line">o.hasOwnProperty(<span class="string">'prop'</span>); <span class="comment">// true 说明prop是原型上的自身上的属性。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 可以用来创建空对象</span></span><br><span class="line"><span class="keyword">var</span> o = <span class="built_in">Object</span>.create(<span class="literal">null</span>);</span><br><span class="line"><span class="keyword">typeof</span> o.toString(); <span class="comment">// 'undefined'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="其他常用"><a href="#其他常用" class="headerlink" title="其他常用"></a>其他常用</h3><h4 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h4><p>类似数组，指的是对线属性名为数字，而又有对应值</p>
+<p>这里指的是用方法将一堆值转换为这种类似数组的形势</p>
+<ul>
+<li>es6的…运算符</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr1 = [...arrayLike]; <span class="comment">// ['a','b','c']</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>es6的Array.form</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr2 = <span class="built_in">Array</span>.from(arrayLike); <span class="comment">// ['a', 'b', 'c']</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>es5的Array.prototype.slice.call()</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">a,b,c,d</span>) </span></span><br><span class="line"><span class="function">   </span>&#123; </span><br><span class="line">      <span class="keyword">var</span> arg = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>,<span class="number">1</span>); </span><br><span class="line">      alert(arg); </span><br><span class="line">   &#125; </span><br><span class="line">   test(<span class="string">"a"</span>,<span class="string">"b"</span>,<span class="string">"c"</span>,<span class="string">"d"</span>); <span class="comment">//b,c,d</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一个参数是context，替换方法中的this</span></span><br><span class="line"><span class="comment">// 第二个参数传递给对象函数的参数</span></span><br></pre></td></tr></table></figure>
+
+<p>甚至能将具有length属性的对象转换为数组</p>
+<blockquote>
+<p>最后可以看看高阶函数<a href="https://juejin.im/post/5d10f4746fb9a07eee5eda1c" target="_blank" rel="noopener">https://juejin.im/post/5d10f4746fb9a07eee5eda1c</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag"># js</a>
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/06/%E8%B8%A9%E5%9D%91/%E7%82%B9%E5%87%BB%E5%AE%9E%E7%8E%B0%E5%A4%8D%E5%88%B6/" rel="prev" title="点击实现复制">
+                点击实现复制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#起名字与具体功能考虑"><span class="nav-number">1.</span> <span class="nav-text">起名字与具体功能考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新变量与返回值"><span class="nav-number">2.</span> <span class="nav-text">新变量与返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#考虑用循环还是递归"><span class="nav-number">3.</span> <span class="nav-text">考虑用循环还是递归</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#循环"><span class="nav-number">3.1.</span> <span class="nav-text">循环</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#for循环"><span class="nav-number">3.1.1.</span> <span class="nav-text">for循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#for-in-循环"><span class="nav-number">3.1.2.</span> <span class="nav-text">for in 循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#for-of-循环"><span class="nav-number">3.1.3.</span> <span class="nav-text">for of 循环</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#递归"><span class="nav-number">3.2.</span> <span class="nav-text">递归</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#考虑界限"><span class="nav-number">4.</span> <span class="nav-text">考虑界限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类型判断"><span class="nav-number">4.1.</span> <span class="nav-text">类型判断</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#typeof"><span class="nav-number">4.1.1.</span> <span class="nav-text">typeof</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#instanceof"><span class="nav-number">4.1.2.</span> <span class="nav-text">instanceof</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-prototype-toString-call"><span class="nav-number">4.1.3.</span> <span class="nav-text">Object.prototype.toString.call()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Array-isArray"><span class="nav-number">4.1.4.</span> <span class="nav-text">Array.isArray()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空值判断"><span class="nav-number">4.2.</span> <span class="nav-text">空值判断</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#数组"><span class="nav-number">4.2.1.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#json对象"><span class="nav-number">4.2.2.</span> <span class="nav-text">json对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#for…in循环判断对象"><span class="nav-number">4.2.3.</span> <span class="nav-text">for…in循环判断对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-keys"><span class="nav-number">4.2.4.</span> <span class="nav-text">Object.keys()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#直接使用对象属性判断"><span class="nav-number">4.2.5.</span> <span class="nav-text">直接使用对象属性判断</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#等号使用"><span class="nav-number">4.3.</span> <span class="nav-text">等号使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#双等号比较过程"><span class="nav-number">4.3.1.</span> <span class="nav-text">双等号比较过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三等号比较过程"><span class="nav-number">4.3.2.</span> <span class="nav-text">三等号比较过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组常用函数"><span class="nav-number">5.</span> <span class="nav-text">数组常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Array-splice-begin-deleteCount-addItem1-addItem2…"><span class="nav-number">5.1.</span> <span class="nav-text">Array.splice(begin, deleteCount, addItem1, addItem2…)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Array-slice-start-end"><span class="nav-number">5.2.</span> <span class="nav-text">Array.slice([start[, end]])</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Array-join-‘xxx’"><span class="nav-number">5.2.1.</span> <span class="nav-text">Array.join(‘xxx’)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#push、concat、indexOf"><span class="nav-number">5.3.</span> <span class="nav-text">push、concat、indexOf</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Array-includes-element-fromIndex-0"><span class="nav-number">5.3.1.</span> <span class="nav-text">Array.includes(element, fromIndex&#x3D;0)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串常用函数"><span class="nav-number">6.</span> <span class="nav-text">字符串常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#String-split-element"><span class="nav-number">6.1.</span> <span class="nav-text">String.split(element)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#String-substr-start-length"><span class="nav-number">6.2.</span> <span class="nav-text">String.substr(start[, length])</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的常用函数"><span class="nav-number">7.</span> <span class="nav-text">对象的常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Object-prototype-hasOwnProperty-prop"><span class="nav-number">7.1.</span> <span class="nav-text">Object.prototype.hasOwnProperty(prop)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Object-create-obj-descr"><span class="nav-number">7.2.</span> <span class="nav-text">Object.create(obj,descr)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他常用"><span class="nav-number">8.</span> <span class="nav-text">其他常用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#arguments"><span class="nav-number">8.1.</span> <span class="nav-text">arguments</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

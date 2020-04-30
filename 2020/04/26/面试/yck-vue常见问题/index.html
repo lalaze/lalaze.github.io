@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="面试,刷题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="MVVM是什么首先什么是View，什么事Model  View，就是页面嘛，Model，就是指本地数据和数据库中的数据   传统的MVC用控制器更新模型，视图从模型中获取数据去渲染，当用户有输入时，控制控制器去更新模型，并且通知视图更新   当项目越来越大的时候，控制器 代码越来越臃肿，控制器就越来越复杂，代码越来越多，不利于维护 MVVM引入ViewModel,为了独立view与model，用v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue常见问题">
+<meta property="og:url" content="http://yoursite.com/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="MVVM是什么首先什么是View，什么事Model  View，就是页面嘛，Model，就是指本地数据和数据库中的数据   传统的MVC用控制器更新模型，视图从模型中获取数据去渲染，当用户有输入时，控制控制器去更新模型，并且通知视图更新   当项目越来越大的时候，控制器 代码越来越臃肿，控制器就越来越复杂，代码越来越多，不利于维护 MVVM引入ViewModel,为了独立view与model，用v">
+<meta property="article:published_time" content="2020-04-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-29T00:51:35.328Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="刷题">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/26/面试/yck-vue常见问题/"/>
+
+
+
+
+
+  <title>vue常见问题 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vue常见问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-26T00:00:00+08:00">
+                2020-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  847
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MVVM是什么"><a href="#MVVM是什么" class="headerlink" title="MVVM是什么"></a>MVVM是什么</h2><h3 id="首先什么是View，什么事Model"><a href="#首先什么是View，什么事Model" class="headerlink" title="首先什么是View，什么事Model"></a>首先什么是View，什么事Model</h3><p>  View，就是页面嘛，Model，就是指本地数据和数据库中的数据</p>
+<p>  传统的MVC用控制器更新模型，视图从模型中获取数据去渲染，当用户有输入时，控制控制器去更新模型，并且通知视图更新</p>
+<p>  当项目越来越大的时候，控制器</p>
+<p>代码越来越臃肿，控制器就越来越复杂，代码越来越多，不利于维护</p>
+<p>MVVM引入ViewModel,为了独立view与model，用viewmodl做中间者，不用control了，多个view共用一个viewmodel逻辑</p>
+<p>说人话，以vue来说，view就是模板，model就是数据来源，viewModel就是组件的实例（可以理解为view更新的规则，），同时还会引入数据绑定的功能，model改变就改变viewmodel的数据</p>
+<p>这里的话，MVVM的精髓是通过ViewModel将视图中的状态和用户的行为分离出一个抽象，就是vm状态全由数据驱动的了</p>
+<h2 id="Virtual-Dom"><a href="#Virtual-Dom" class="headerlink" title="Virtual Dom"></a>Virtual Dom</h2><p>原生操作dom是很慢的，而操作js很快，可以通过js来模拟dom，更重要的是，抽象出了dom，可以进行更多的操作</p>
+<p>在更新时对两个虚拟dom（js对象）进行最小差异并且局部更新Dom</p>
+<p>这个我的vue源码笔记有说，不认真看，总体来说就是设计一整套diff算法，来达到最快更新</p>
+<p>Virtual Dom的优势</p>
+<ul>
+<li>将vdmo作为兼容层，可以对非web端的系统，实现跨端开发</li>
+<li>通过vdom可以渲染其他平台</li>
+<li>实现组件高度抽象化</li>
+</ul>
+<h2 id="路由原理"><a href="#路由原理" class="headerlink" title="路由原理"></a>路由原理</h2><p>路由要做啥，简单说就是要监听url的变化，然后匹配路由规则，显示相应的页面，并且不用刷新页面</p>
+<p>前端路由实现的方式</p>
+<ul>
+<li>Hash模式</li>
+<li>History模式</li>
+</ul>
+<h3 id="Hash模式"><a href="#Hash模式" class="headerlink" title="Hash模式"></a>Hash模式</h3><p>简单说就是#号后面的哈希值发生变化，可以通过haschange事件监听到URL的变化，从而进行页面跳转，并且无论哈希值如何变化，服务端收到的url永远都是<a href="http://www.test.com" target="_blank" rel="noopener">www.test.com</a></p>
+<h3 id="History"><a href="#History" class="headerlink" title="History"></a>History</h3><p>是html5的新功能，主要使用hostor.pushState和replaceState改变urrl</p>
+<p>用这两个方法改变url不会引起页面的刷新，只会更新浏览器的历史记录</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新增历史记录</span></span><br><span class="line">history.pushState(stateObject, title, URL)</span><br><span class="line"><span class="comment">// 替换当前历史记录</span></span><br><span class="line">history.replaceState(stateObject, title, URL)</span><br></pre></td></tr></table></figure>
+
+<p>用户触发浏览器动作时，比如点击后退按钮时会触发popState事件，我们就可以或者他的state了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'popstate'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="comment">// e.state 就是 pushState(stateObject) 中的 stateObject</span></span><br><span class="line">  <span class="built_in">console</span>.log(e.state)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="两种模式的对比"><a href="#两种模式的对比" class="headerlink" title="两种模式的对比"></a>两种模式的对比</h3><ul>
+<li><p>Hash只可以改变后面#的内容，History比较随意，可以用api任意设置同源的url</p>
+</li>
+<li><p>History模式可以通过API添加任意类型的api到历史记录中，Hash模式只能更改哈希值，也就是字符串</p>
+</li>
+<li><p>Hash无需后端配置，并且兼容性号，History模式在用户手动输入地址或者地址刷新后都会发起url请求，后端要配置好一个inde.html对应匹配不到的静态资源</p>
+</li>
+</ul>
+<h2 id="Vue、React的区别"><a href="#Vue、React的区别" class="headerlink" title="Vue、React的区别"></a>Vue、React的区别</h2><p>react比vue自由，换一种说法就是比vue难，vue语法糖多</p>
+<p>react同时使用jsx，有一定成本，但是更灵活是真的</p>
+<p>其实两者区别真的不大，做的事情都是一样的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+            <a href="/tags/%E5%88%B7%E9%A2%98/" rel="tag"># 刷题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E8%BF%9B%E9%98%B6%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="next" title="vue进阶知识点">
+                <i class="fa fa-chevron-left"></i> vue进阶知识点
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%80%83%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="prev" title="vue常考知识点">
+                vue常考知识点 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MVVM是什么"><span class="nav-number">1.</span> <span class="nav-text">MVVM是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#首先什么是View，什么事Model"><span class="nav-number">1.1.</span> <span class="nav-text">首先什么是View，什么事Model</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Virtual-Dom"><span class="nav-number">2.</span> <span class="nav-text">Virtual Dom</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由原理"><span class="nav-number">3.</span> <span class="nav-text">路由原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash模式"><span class="nav-number">3.1.</span> <span class="nav-text">Hash模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#History"><span class="nav-number">3.2.</span> <span class="nav-text">History</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两种模式的对比"><span class="nav-number">3.3.</span> <span class="nav-text">两种模式的对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue、React的区别"><span class="nav-number">4.</span> <span class="nav-text">Vue、React的区别</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

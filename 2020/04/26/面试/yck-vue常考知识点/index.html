@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="面试,刷题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="生命周期钩子函数beforeCreated构造函数，是获取不到props与data的，数据首次出现初始化在initState中 然后执行created钩子函数，这个时候可以访问数据了，不过组件还没有被挂载，是看不到的 然后只是beforeMount钩子，开始创建VDOM,最后执行mouted钩子，并将VDOM渲染为只是DOM并且渲染数据，组件中如果有子组件的话，会递归挂载子组件，只有所有子组件挂载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue常考知识点">
+<meta property="og:url" content="http://yoursite.com/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%80%83%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="生命周期钩子函数beforeCreated构造函数，是获取不到props与data的，数据首次出现初始化在initState中 然后执行created钩子函数，这个时候可以访问数据了，不过组件还没有被挂载，是看不到的 然后只是beforeMount钩子，开始创建VDOM,最后执行mouted钩子，并将VDOM渲染为只是DOM并且渲染数据，组件中如果有子组件的话，会递归挂载子组件，只有所有子组件挂载">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/26/Jc4oOe.png">
+<meta property="article:published_time" content="2020-04-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-29T00:51:35.326Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="刷题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/04/26/Jc4oOe.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/26/面试/yck-vue常考知识点/"/>
+
+
+
+
+
+  <title>vue常考知识点 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%80%83%E7%9F%A5%E8%AF%86%E7%82%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vue常考知识点</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-26T00:00:00+08:00">
+                2020-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="生命周期钩子函数"><a href="#生命周期钩子函数" class="headerlink" title="生命周期钩子函数"></a>生命周期钩子函数</h2><p>beforeCreated构造函数，是获取不到props与data的，数据首次出现初始化在initState中</p>
+<p>然后执行created钩子函数，这个时候可以访问数据了，不过组件还没有被挂载，是看不到的</p>
+<p>然后只是beforeMount钩子，开始创建VDOM,最后执行mouted钩子，并将VDOM渲染为只是DOM并且渲染数据，组件中如果有子组件的话，会递归挂载子组件，只有所有子组件挂载完毕，才会执行根组件的挂载钩子</p>
+<p>然后剩下的就是数据更新时会调用的beforeUpdate和updated了,没啥好说的，更新时调用</p>
+<p>还有一个是keep-alive独有生命周期，分别为activated和deactivated，用keep-alive包裹的组件在切换时不会进行销毁，而是缓存到内存中执行deactivated构造函数，在缓存中渲染后会执行actived</p>
+<p>最后是销毁组件的钩子beforeDestory和destoryed，前者适合移除事件，定时器等，释放内存，然后会递归销毁子组件，直到所有的子组件都销毁完毕后会执行根组件的destoryed钩子</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>beforeCreated是拿不到数据的，知道created才有</li>
+<li>beforeMount之后会递归创建挂载所有子组件，只有所有子组件挂载完才会执行mouted</li>
+<li>keep-alive独有生命周期是在内存的，切换组件不会销毁</li>
+<li>beforeDestory后会递归销毁所有的子组件再执行destoryed</li>
+</ul>
+<p>最后上个图</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/Jc4oOe.png" alt="Jc4oOe.png"></p>
+<h2 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h2><p>一般面对以下情况</p>
+<ul>
+<li>父子组件通信</li>
+<li>兄弟组件通信</li>
+<li>跨层级通信</li>
+<li>任意组件通信</li>
+</ul>
+<h3 id="父子通信"><a href="#父子通信" class="headerlink" title="父子通信"></a>父子通信</h3><p>先来看看父子通信</p>
+<p>父组件通过props传递数据给子组件，子组件通过emit发送事件传递数据给父组件</p>
+<p>缺点是单向数据流的，子组件只能通过发送事件修改父组件的数据</p>
+<p>v-model可以帮助简化这个写法，但是根本上其实是一样的，v-model相当于一个语法糖</p>
+<p>通过$parent或者$children对象来访问父子组件中的方法与实例</p>
+<p>同时还有$liensters与.sync这两个属性来帮助通信</p>
+<ul>
+<li>$liensters将父组件中的v-on事件监听器传递给子组件，子组件通过访问$listeners来自定义监听器</li>
+<li>.sync：本质上也是一个语法糖</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">父组件中</span><br><span class="line">&lt;input :value.sync = <span class="string">"value"</span>&gt;</span><br><span class="line"></span><br><span class="line">翻译为</span><br><span class="line">&lt;input :value=<span class="string">"value"</span> @update:value=<span class="string">"v =&gt; value = v"</span>&gt;&lt;<span class="regexp">/comp&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">子组件中</span></span><br><span class="line"><span class="regexp">this.$emit('update:value',1)</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">就是一个语法糖，有这个.sync的属性都可以通过$emit改变父组件中的值</span></span><br><span class="line"><span class="regexp">就是v-model的变种</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="兄弟组件通信"><a href="#兄弟组件通信" class="headerlink" title="兄弟组件通信"></a>兄弟组件通信</h3><p>通过上面的$parent查找父组件中的其他子组件的值实现</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.$parent.$children </span><br><span class="line">可以获得父组件的自组建实例，然后通过组建name获取实例通信</span><br></pre></td></tr></table></figure>
+
+<h3 id="跨多层次组件通信"><a href="#跨多层次组件通信" class="headerlink" title="跨多层次组件通信"></a>跨多层次组件通信</h3><p>有一个api provide/inject方法可以用，不过文档不推荐直接用在服务中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 父组件 A</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  provide: &#123;</span><br><span class="line">    data: <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 子组件 B</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  inject: [<span class="string">'data'</span>],</span><br><span class="line">  mounted() &#123;</span><br><span class="line">    <span class="comment">// 无论跨几层都能获得父组件的 data 属性</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.data) <span class="comment">// =&gt; 1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="任意通信"><a href="#任意通信" class="headerlink" title="任意通信"></a>任意通信</h3><p>这个无论组件在任何位置都要通信的画，引入全局变量Vuex吧，一般上面说的简单父子兄弟可以不用，如果实在不行还是引入的好</p>
+<h2 id="Vue的mixin与minins"><a href="#Vue的mixin与minins" class="headerlink" title="Vue的mixin与minins"></a>Vue的mixin与minins</h2><p>mixin全局混入，会影响到每一个组件，一般的插件都是这样初始化</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vue.mixin(&#123;</span><br><span class="line">    beforeCreate() &#123;</span><br><span class="line">        <span class="comment">// ...逻辑</span></span><br><span class="line">        <span class="comment">// 这种方式会影响到每个组件的 beforeCreate 钩子函数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>但是不建议滥用，但是有的情况真的很方便，一些全局的东西我们可以直接引入，方便</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mixin=&#123;</span><br><span class="line">    data()&#123;</span><br><span class="line">        <span class="keyword">return</span>&#123;</span><br><span class="line">            msg:<span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    methods:&#123;</span><br><span class="line">        foo()&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'hello from mixin!----'</span>+<span class="keyword">this</span>.msg++)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> child=Vue.component(<span class="string">'child'</span>,&#123; </span><br><span class="line">        template:<span class="string">`&lt;h1 @click="foo"&gt;child component&lt;/h1&gt;`</span>, </span><br><span class="line">        mixins:[mixin]</span><br><span class="line">&#125;)</span><br><span class="line">Vue.component(<span class="string">'kid'</span>,&#123; </span><br><span class="line">        template:<span class="string">`&lt;h1 @click="foo"&gt;kid component&lt;/h1&gt;`</span>, </span><br><span class="line">        mixins:[mixin]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>mixins的不会影响全局，看这个例子，复用了foo方法，是个很好的写法</p>
+<h2 id="computed和watch的区别"><a href="#computed和watch的区别" class="headerlink" title="computed和watch的区别"></a>computed和watch的区别</h2><p>computed计算属性，依赖其他属性计算值，并且有缓存，只有计算的值变化了才会返回内容</p>
+<p>watch监听值的变化，只有有变化就会执行回调</p>
+<p>所以一般需要依赖别的属性来动态获得值的时候用computed，对于监听值然后来做复杂业务逻辑的情况用watch</p>
+<h2 id="keep-aive组件"><a href="#keep-aive组件" class="headerlink" title="keep-aive组件"></a>keep-aive组件</h2><p>如果一个组件不需要多次渲染浪费性能的话，可以使用keep-alive包住，他就独立在内存中，在切换组件的时候不会进行销毁，再切换回来就会直接出来了，不会重复渲染</p>
+<h2 id="v-show与v-if区别"><a href="#v-show与v-if区别" class="headerlink" title="v-show与v-if区别"></a>v-show与v-if区别</h2><p>v-show只切换只是切换display，还是在dom树里面的，切换的消耗比较小，v-if直接在dom树里没了，每次切换都要销毁挂载组件，所以性能消耗更大，不适合在经常切换的场景</p>
+<p>但是v-if可以减少初始页面加载的开销，就是首屏不卡，看情况选吧</p>
+<h2 id="组件从的data"><a href="#组件从的data" class="headerlink" title="组件从的data"></a>组件从的data</h2><p>我们知道组件中的data一般是return的写法，那为什么呢</p>
+<p>组件复用时所有实例都共享data，所以如果data是对象的写法，一个实例改变会影响其他实例，所以要写成函数return出去，不会影响其他实例</p>
+<p>而new Vue方法的话是创造根组件的，一般情况下不会复用，所以咋写都没问题</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+            <a href="/tags/%E5%88%B7%E9%A2%98/" rel="tag"># 刷题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/26/%E9%9D%A2%E8%AF%95/yck-vue%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" rel="next" title="vue常见问题">
+                <i class="fa fa-chevron-left"></i> vue常见问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/27/%E8%B8%A9%E5%9D%91/%E7%A6%81%E6%AD%A2%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E8%81%94%E6%83%B3/" rel="prev" title="禁止浏览器密码联想">
+                禁止浏览器密码联想 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#生命周期钩子函数"><span class="nav-number">1.</span> <span class="nav-text">生命周期钩子函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.1.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件通信"><span class="nav-number">2.</span> <span class="nav-text">组件通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#父子通信"><span class="nav-number">2.1.</span> <span class="nav-text">父子通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#兄弟组件通信"><span class="nav-number">2.2.</span> <span class="nav-text">兄弟组件通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨多层次组件通信"><span class="nav-number">2.3.</span> <span class="nav-text">跨多层次组件通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#任意通信"><span class="nav-number">2.4.</span> <span class="nav-text">任意通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue的mixin与minins"><span class="nav-number">3.</span> <span class="nav-text">Vue的mixin与minins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#computed和watch的区别"><span class="nav-number">4.</span> <span class="nav-text">computed和watch的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keep-aive组件"><span class="nav-number">5.</span> <span class="nav-text">keep-aive组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#v-show与v-if区别"><span class="nav-number">6.</span> <span class="nav-text">v-show与v-if区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件从的data"><span class="nav-number">7.</span> <span class="nav-text">组件从的data</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue,源码,读书笔记,框架设计," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="渲染器工作流程上一章写了一个组装vnode的函数，现在就讲怎么将组装好的vnode渲染为html的dom了 渲染器的工作一般分两个阶段  mount：如果vnode不存在，直接将新的vnode挂载成全新的dom patch：如果旧的vnode存在，将旧的vnode与新的vnode做比较，试图以最小的资源开销完成dom的更新  一般渲染器接受两个参数，一个是要渲染的vnode，一个是要挂载的地点 具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="渲染器mount上">
+<meta property="og:url" content="http://yoursite.com/2020/04/09/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06.%E6%B8%B2%E6%9F%93%E5%99%A8mount%E4%B8%8A/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="渲染器工作流程上一章写了一个组装vnode的函数，现在就讲怎么将组装好的vnode渲染为html的dom了 渲染器的工作一般分两个阶段  mount：如果vnode不存在，直接将新的vnode挂载成全新的dom patch：如果旧的vnode存在，将旧的vnode与新的vnode做比较，试图以最小的资源开销完成dom的更新  一般渲染器接受两个参数，一个是要渲染的vnode，一个是要挂载的地点 具">
+<meta property="article:published_time" content="2020-04-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-25T06:13:38.794Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="读书笔记">
+<meta property="article:tag" content="框架设计">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/09/vue源码学习/06.渲染器mount上/"/>
+
+
+
+
+
+  <title>渲染器mount上 | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/09/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06.%E6%B8%B2%E6%9F%93%E5%99%A8mount%E4%B8%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">渲染器mount上</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-09T00:00:00+08:00">
+                2020-04-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="渲染器工作流程"><a href="#渲染器工作流程" class="headerlink" title="渲染器工作流程"></a>渲染器工作流程</h2><p>上一章写了一个组装vnode的函数，现在就讲怎么将组装好的vnode渲染为html的dom了</p>
+<p>渲染器的工作一般分两个阶段</p>
+<ul>
+<li>mount：如果vnode不存在，直接将新的vnode挂载成全新的dom</li>
+<li>patch：如果旧的vnode存在，将旧的vnode与新的vnode做比较，试图以最小的资源开销完成dom的更新</li>
+</ul>
+<p>一般渲染器接受两个参数，一个是要渲染的vnode，一个是要挂载的地点</p>
+<p>具体流程如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> prevVNode = container.vnode</span><br><span class="line">  <span class="keyword">if</span> (prevVNode == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (vnode) &#123;</span><br><span class="line">      <span class="comment">// 没有旧的 VNode，只有新的 VNode。使用 `mount` 函数挂载全新的 VNode</span></span><br><span class="line">      mount(vnode, container)</span><br><span class="line">      <span class="comment">// 将新的 VNode 添加到 container.vnode 属性下，这样下一次渲染时旧的 VNode 就存在了</span></span><br><span class="line">      container.vnode = vnode</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (vnode) &#123;</span><br><span class="line">      <span class="comment">// 有旧的 VNode，也有新的 VNode。则调用 `patch` 函数打补丁</span></span><br><span class="line">      patch(prevVNode, vnode, container)</span><br><span class="line">      <span class="comment">// 更新 container.vnode</span></span><br><span class="line">      container.vnode = vnode</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 有旧的 VNode 但是没有新的 VNode，这说明应该移除 DOM，在浏览器中可以使用 removeChild 函数。</span></span><br><span class="line">      container.removeChild(prevVNode.el)</span><br><span class="line">      container.vnode = <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上是渲染器最基本的操作，同时他还附带着</p>
+<ul>
+<li>控制组件的生命周期钩子函数调用</li>
+<li>多端渲染的桥梁<ul>
+<li>意思是我这个render方法可以做到适配到不同平台例如web与手机的中间层，render之后调用我想要的平台的方法挂载dom</li>
+</ul>
+</li>
+<li>异步渲染<ul>
+<li>究级加快速度，因为异步渲染好，组件的挂载，dom的变更，dom的时间等时机判断都不一样了，vue3是用调度器来完成得</li>
+</ul>
+</li>
+<li>diff算法、<ul>
+<li>就是比对新旧dom的算法</li>
+</ul>
+</li>
+</ul>
+<h2 id="挂载普通标签元素"><a href="#挂载普通标签元素" class="headerlink" title="挂载普通标签元素"></a>挂载普通标签元素</h2><p>我们先从最普通的标签元素开始</p>
+<p>先从mount开始</p>
+<h3 id="mount普通标签"><a href="#mount普通标签" class="headerlink" title="mount普通标签"></a>mount普通标签</h3><p>首先不同的vnode要有不同的挂载方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mount</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; flags &#125; = vnode</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; VNodeFlags.ELEMENT) &#123;  <span class="comment">// &amp; 二进制  这里相当于==</span></span><br><span class="line">    <span class="comment">// 挂载普通标签</span></span><br><span class="line">    mountElement(vnode, container)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.COMPONENT) &#123;</span><br><span class="line">    <span class="comment">// 挂载组件</span></span><br><span class="line">    mountComponent(vnode, container)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.TEXT) &#123;</span><br><span class="line">    <span class="comment">// 挂载纯文本</span></span><br><span class="line">    mountText(vnode, container)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.FRAGMENT) &#123;</span><br><span class="line">    <span class="comment">// 挂载 Fragment</span></span><br><span class="line">    mountFragment(vnode, container)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.PORTAL) &#123;</span><br><span class="line">    <span class="comment">// 挂载 Portal</span></span><br><span class="line">    mountPortal(vnode, container)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到是有不同的挂载函数的</p>
+<p>还是先看最普通的标签挂载</p>
+<p>各种情况的处理我直接写注释了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// &lt;circle&gt; 是svg标签，但是我们前面写的vnode只匹配了svg，加入第三个参数isSVG</span></span><br><span class="line"><span class="comment">// 补 circle是只可能出现在svg标签里面的子标签，所以是为了解决svg的children没有按svg方法创建节点，传递isSVG</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountElement</span>(<span class="params">vnode, container,isSVG</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 兼容svg的创建节点方式</span></span><br><span class="line">  <span class="keyword">const</span> isSVG = vnode.flags &amp; VNodeFlags.ELEMENT_SVG</span><br><span class="line">  <span class="keyword">const</span> el = isSVG</span><br><span class="line">    ? <span class="built_in">document</span>.createElementNS(<span class="string">'http://www.w3.org/2000/svg'</span>, vnode.tag)</span><br><span class="line">    : <span class="built_in">document</span>.createElement(vnode.tag)</span><br><span class="line">  </span><br><span class="line">  vnode.el = el <span class="comment">// 保存创建的el节点</span></span><br><span class="line">  <span class="comment">// 挂载vnodeData style class等</span></span><br><span class="line">  <span class="keyword">const</span> data = vnode.data</span><br><span class="line">  <span class="keyword">if</span> (data) &#123;</span><br><span class="line">    <span class="comment">// 如果 VNodeData 存在，则遍历之</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> data) &#123;</span><br><span class="line">      <span class="comment">// key 可能是 class、style其他等等</span></span><br><span class="line">      <span class="keyword">switch</span>(key) &#123;  <span class="comment">//这里只写了一个case：style，还有其他情况</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">'style'</span>:</span><br><span class="line">          <span class="comment">// 如果 key 的值是 style，说明是内联样式，逐个将样式规则应用到 el</span></span><br><span class="line">          <span class="keyword">for</span>(<span class="keyword">let</span> k <span class="keyword">in</span> data.style) &#123;</span><br><span class="line">            el.style[k] = data.style[k]</span><br><span class="line">          &#125;</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">         <span class="keyword">case</span> <span class="string">'class'</span>:</span><br><span class="line">          el.className = data[key]</span><br><span class="line">          <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">          <span class="keyword">break</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 递归挂载子节点</span></span><br><span class="line">  <span class="keyword">const</span> childFlags = vnode.childFlags</span><br><span class="line">  <span class="keyword">const</span> children = vnode.children</span><br><span class="line">  <span class="comment">// 检测如果没有子节点则无需递归挂载</span></span><br><span class="line">  <span class="keyword">if</span> (childFlags !== ChildrenFlags.NO_CHILDREN) &#123;</span><br><span class="line">    <span class="keyword">if</span> (childFlags &amp; ChildrenFlags.SINGLE_VNODE) &#123;</span><br><span class="line">      <span class="comment">// 如果是单个子节点则调用 mount 函数挂载</span></span><br><span class="line">      mount(children, el,isSVG)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (childFlags &amp; ChildrenFlags.MULTIPLE_VNODES) &#123;</span><br><span class="line">      <span class="comment">// 如果是单多个子节点则遍历并调用 mount 函数挂载</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">        <span class="comment">// 调用moute是因为子节点是可能是不同类型，不是普通的html文本</span></span><br><span class="line">          mount(children[i], el,isSVG)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">      </span><br><span class="line">  container.appendChild(el)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上面是加了class的，但是目前是直接字符串的设计，不能动态class，同时我们也要考虑数组、对象的结构形式</p>
+<p>可以写一个算法将h编译前的传进来的各种数据结构的class进行转换</p>
+<p>说明下动态变化进来的是已经定了的数据，不会再变了</p>
+<p>算法如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">normalizeClass</span>(<span class="params">classValue</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// res 是最终要返回的类名字符串</span></span><br><span class="line">  <span class="keyword">let</span> res = <span class="string">''</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> classValue === <span class="string">'string'</span>) &#123;</span><br><span class="line">    res = classValue</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(classValue)) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; classValue.length; i++) &#123;</span><br><span class="line">      res += normalizeClass(classValue[i]) + <span class="string">' '</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> classValue === <span class="string">'object'</span>) &#123;  </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> name <span class="keyword">in</span> classValue) &#123;</span><br><span class="line">      <span class="keyword">if</span> (classValue[name]) &#123;</span><br><span class="line">        res += name + <span class="string">' '</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res.trim()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里这个class体现的是你设计的使用方式与你最终代码之间的数据衔接转换，这个是我们要考虑的</p>
+<h4 id="普通标签元素的Attributes和DOMProperties"><a href="#普通标签元素的Attributes和DOMProperties" class="headerlink" title="普通标签元素的Attributes和DOMProperties"></a>普通标签元素的Attributes和DOMProperties</h4><ul>
+<li>attr指的是id、class等存在于标签上的属性</li>
+<li>DOM prop 也是存在于标签上的属性，但是有一些不同，他是我们自定义的，跟上面的有什么区别呢？</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// &lt;body id="page"&gt;&lt;/body&gt;  这个id就是attr</span></span><br><span class="line"><span class="comment">// &lt;body custom="val"&gt;&lt;/body&gt;  这个custom就是DOM prop</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.custom =&gt; <span class="literal">undefined</span>  dom prop无法这样读取</span><br><span class="line">可以用setAttribut方法设置，但是不能设置全部</span><br><span class="line"></span><br><span class="line"><span class="comment">// checkbox 元素</span></span><br><span class="line"><span class="keyword">const</span> checkboxEl = <span class="built_in">document</span>.querySelector(<span class="string">'input'</span>)</span><br><span class="line"><span class="comment">// 使用 setAttribute 设置 checked 属性为 false</span></span><br><span class="line">checkboxEl.setAttribute(<span class="string">'checked'</span>, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// 这个false设置的时候转换为了'false'设置进去，字符串就是true了</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(checkboxEl.checked) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>所以有些属性不能通过setAttribut设置。value、checked、selected、muted都不能用</p>
+<p>我们由此的出同样是标签上的元素，也有两种，会有区别的</p>
+<p>接下来我们想办法为我们的vnote可以挂载更多属性（前面设置了style与class）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 我们目前实现的有</span></span><br><span class="line">&#123;</span><br><span class="line">  style: ..., <span class="comment">// 内联样式数据</span></span><br><span class="line">  class: ..., // class 数据</span><br><span class="line">  target: ... <span class="comment">// Portal 的挂载目标</span></span><br><span class="line">&#125;</span><br><span class="line"> <span class="comment">// 我们要排除target，因为他是protal的属性</span></span><br><span class="line"> <span class="comment">// 用正则匹配不能用setAttribut的属性，原生dom自有的，直接等于就行</span></span><br><span class="line">  <span class="keyword">const</span> domPropsRE = <span class="regexp">/\[A-Z]|^(?:value|checked|selected|muted)$/</span></span><br><span class="line">  <span class="comment">// 这个正则同时匹配有大写字母的属性例如innHTML、textContent等做dom prop处理</span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// 在data的转换里面加情况</span></span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">          <span class="keyword">if</span> (domPropsRE.test(key)) &#123;</span><br><span class="line">            <span class="comment">// 当作 DOM Prop 处理</span></span><br><span class="line">            el[key] = data[key]</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 当作 Attr 处理</span></span><br><span class="line">            el.setAttribute(key, data[key])</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>说要处理target，但是好像没看到，不过target放上去好像也没什么影响，后面待定</p>
+<h4 id="为dom添加事件"><a href="#为dom添加事件" class="headerlink" title="为dom添加事件"></a>为dom添加事件</h4><p>mount阶段添加时间直接用addEventListener就可以了</p>
+<p>但是我们的vnote要设计好</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 我们的html写成这个亚子</span></span><br><span class="line"><span class="comment">// &lt;div @click="handler"&gt;&lt;/div&gt;</span></span><br><span class="line"><span class="comment">// 对应我们的vnote设计</span></span><br><span class="line"><span class="keyword">const</span> elementVNode = h(<span class="string">'div'</span>, &#123;</span><br><span class="line">  onclick: handler</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 所有的事件都是on开头的，我们按照这个匹配对照属性上面给他加时间</span></span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line"><span class="keyword">if</span> (key[<span class="number">0</span>] === <span class="string">'o'</span> &amp;&amp; key[<span class="number">1</span>] === <span class="string">'n'</span>) &#123;</span><br><span class="line">    <span class="comment">// 事件</span></span><br><span class="line">    el.addEventListener(key.slice(<span class="number">2</span>), data[key])</span><br><span class="line">    <span class="comment">// addEventListener添加时间是没有on的去除</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (domPropsRE.test(key)) &#123;</span><br><span class="line">    <span class="comment">// 当作 DOM Prop 处理</span></span><br><span class="line">    el[key] = data[key]</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 当作 Attr 处理</span></span><br><span class="line">    el.setAttribute(key, data[key])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="挂载纯文本、Fragment、Portal"><a href="#挂载纯文本、Fragment、Portal" class="headerlink" title="挂载纯文本、Fragment、Portal"></a>挂载纯文本、Fragment、Portal</h2><h3 id="mount文本节点"><a href="#mount文本节点" class="headerlink" title="mount文本节点"></a>mount文本节点</h3><p>一个mouteText方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountText</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> el = <span class="built_in">document</span>.createTextNode(vnode.children) <span class="comment">// 用原生的createTextNode方法</span></span><br><span class="line">  vnode.el = el</span><br><span class="line">  container.appendChild(el)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="挂载Fragment"><a href="#挂载Fragment" class="headerlink" title="挂载Fragment"></a>挂载Fragment</h3><p>理论上Fragment与一个vnode的children没有区别，只是他们外面的标签有区别</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Fragment</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Fragment</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>区别是Fragment不会被渲染出来，还有他们的flags不一样，Fragment是VNodeFlags.FRAGMENT，然后elementVNode的我flags是 VNodeFlags.ELEMENT_HTML</p>
+<p>实现</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountFragment</span>(<span class="params">vnode, container, isSVG</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 拿到 children 和 childFlags</span></span><br><span class="line">  <span class="keyword">const</span> &#123; children, childFlags &#125; = vnode</span><br><span class="line">  <span class="keyword">switch</span> (childFlags) &#123;</span><br><span class="line">    <span class="keyword">case</span> ChildrenFlags.SINGLE_VNODE:</span><br><span class="line">      <span class="comment">// 如果是单个子节点，则直接调用 mount</span></span><br><span class="line">      mount(children, container, isSVG)</span><br><span class="line">          <span class="comment">// 单个子节点，指向这个节点</span></span><br><span class="line">          vnode.el = children.el</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">case</span> ChildrenFlags.NO_CHILDREN:</span><br><span class="line">      <span class="comment">// 如果没有子节点，等价于挂载空片段，会创建一个空的文本节点占位</span></span><br><span class="line">      <span class="keyword">const</span> placeholder = createTextVNode(<span class="string">''</span>)</span><br><span class="line">      mountText(placeholder, container)</span><br><span class="line">          <span class="comment">// 没有子节点指向占位的空文本节点</span></span><br><span class="line">          vnode.el = placeholder.el</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// 多个子节点，遍历挂载之</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">        mount(children[i], container, isSVG)</span><br><span class="line">      &#125;</span><br><span class="line">          <span class="comment">// 多个子节点指向第一个子节点</span></span><br><span class="line">          vnode.el = children[<span class="number">0</span>].el</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意flagment不同情况下的el挂载点是不一样的</p>
+<h3 id="挂载Portal"><a href="#挂载Portal" class="headerlink" title="挂载Portal"></a>挂载Portal</h3><p>实现Portal就是将Portal的vnode挂载到他的tag属性所指的挂载点上</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mountPortal</span>(<span class="params">vnode, container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; tag, children, childFlags &#125; = vnode</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取挂载点</span></span><br><span class="line">  <span class="keyword">const</span> target = <span class="keyword">typeof</span> tag === <span class="string">'string'</span> ? <span class="built_in">document</span>.querySelector(tag) : tag</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (childFlags &amp; ChildrenFlags.SINGLE_VNODE) &#123;</span><br><span class="line">    <span class="comment">// 将 children 挂载到 target 上，而非 container</span></span><br><span class="line">    mount(children, target)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (childFlags &amp; ChildrenFlags.MULTIPLE_VNODES) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">      <span class="comment">// 将 children 挂载到 target 上，而非 container</span></span><br><span class="line">      mount(children[i], target)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    <span class="comment">// 占位的空文本节点</span></span><br><span class="line">  <span class="keyword">const</span> placeholder = createTextVNode(<span class="string">''</span>)</span><br><span class="line">  <span class="comment">// 将该节点挂载到 container 中</span></span><br><span class="line">  mountText(placeholder, container, <span class="literal">null</span>)</span><br><span class="line">    <span class="comment">// 注意这里是挂载到container下了，而不是target，空节点在container下</span></span><br><span class="line">  <span class="comment">// el 属性引用该节点</span></span><br><span class="line">  vnode.el = placeholder.el</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>思考为什么要展位的空节点文本，我们设计的portal是希望他可以挂载到任何位置，但是他的行为应该像普通的dom元素一样，有事件有属性，我们就需要一个dom结构来承接这个事件与属性了，所以这里用了一个空的文本节点</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue/" rel="tag"># vue</a>
+          
+            <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+          
+            <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          
+            <a href="/tags/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/" rel="tag"># 框架设计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/09/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/08.%E6%B8%B2%E6%9F%93%E5%99%A8patch/" rel="next" title="vue源码学习/08.渲染器patch">
+                <i class="fa fa-chevron-left"></i> vue源码学习/08.渲染器patch
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/09/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/07.%E6%B8%B2%E6%9F%93%E5%99%A8mount%E4%B8%8B/" rel="prev" title="渲染器mount下">
+                渲染器mount下 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#渲染器工作流程"><span class="nav-number">1.</span> <span class="nav-text">渲染器工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载普通标签元素"><span class="nav-number">2.</span> <span class="nav-text">挂载普通标签元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mount普通标签"><span class="nav-number">2.1.</span> <span class="nav-text">mount普通标签</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#普通标签元素的Attributes和DOMProperties"><span class="nav-number">2.1.1.</span> <span class="nav-text">普通标签元素的Attributes和DOMProperties</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为dom添加事件"><span class="nav-number">2.1.2.</span> <span class="nav-text">为dom添加事件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载纯文本、Fragment、Portal"><span class="nav-number">3.</span> <span class="nav-text">挂载纯文本、Fragment、Portal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mount文本节点"><span class="nav-number">3.1.</span> <span class="nav-text">mount文本节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载Fragment"><span class="nav-number">3.2.</span> <span class="nav-text">挂载Fragment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载Portal"><span class="nav-number">3.3.</span> <span class="nav-text">挂载Portal</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

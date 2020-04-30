@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue,源码,读书笔记,框架设计," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="设计VNodevnode的设计是挺重要的，后面所有设计都要有关他的 Vnode描述真实DOM其实就是现在浏览器描述节点的那一套类似，但是又有一些不一样 1234567891011121314151617181920212223242526272829303132333435363738394041424344&#x2F;&#x2F; 元素节点const elementVNode &#x3D; &amp;#123;    tag: &#39;d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计vnode">
+<meta property="og:url" content="http://yoursite.com/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/03.%E8%AE%BE%E8%AE%A1vnode/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="设计VNodevnode的设计是挺重要的，后面所有设计都要有关他的 Vnode描述真实DOM其实就是现在浏览器描述节点的那一套类似，但是又有一些不一样 1234567891011121314151617181920212223242526272829303132333435363738394041424344&#x2F;&#x2F; 元素节点const elementVNode &#x3D; &amp;#123;    tag: &#39;d">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/07/GcqYwt.png">
+<meta property="article:published_time" content="2020-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-25T06:13:38.784Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="读书笔记">
+<meta property="article:tag" content="框架设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/04/07/GcqYwt.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/07/vue源码学习/03.设计vnode/"/>
+
+
+
+
+
+  <title>设计vnode | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/03.%E8%AE%BE%E8%AE%A1vnode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计vnode</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-07T00:00:00+08:00">
+                2020-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="设计VNode"><a href="#设计VNode" class="headerlink" title="设计VNode"></a>设计VNode</h2><p>vnode的设计是挺重要的，后面所有设计都要有关他的</p>
+<h3 id="Vnode描述真实DOM"><a href="#Vnode描述真实DOM" class="headerlink" title="Vnode描述真实DOM"></a>Vnode描述真实DOM</h3><p>其实就是现在浏览器描述节点的那一套类似，但是又有一些不一样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 元素节点</span></span><br><span class="line"><span class="keyword">const</span> elementVNode = &#123;</span><br><span class="line">    tag: <span class="string">'div'</span>,</span><br><span class="line">    data: &#123;</span><br><span class="line">        style: &#123;</span><br><span class="line">            width: <span class="string">'100px'</span>,</span><br><span class="line">            height: <span class="string">'100px'</span>,</span><br><span class="line">            backgroundColor: <span class="string">'red'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    children: [&#123;</span><br><span class="line">            tag: <span class="string">'h1'</span>,</span><br><span class="line">            data: <span class="literal">null</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            tag: <span class="string">'p'</span>,</span><br><span class="line">            data: <span class="literal">null</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*  tag名字</span></span><br><span class="line"><span class="comment">data是数据,可以看到里面有study</span></span><br><span class="line"><span class="comment">children是字节点的数据哦，因为有多个所以用了数组表示</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 文本节点</span></span><br><span class="line"><span class="keyword">const</span> textVNode = &#123;</span><br><span class="line">  tag: <span class="literal">null</span>,</span><br><span class="line">  data: <span class="literal">null</span>,</span><br><span class="line">  children: <span class="string">'文本内容'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// tag为null，文本不为任何节点</span></span><br><span class="line"><span class="comment">// 可以考虑新建一个text属性来放文本，但是已经有children属性了，不多加</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//一个有文本节点的div标签</span></span><br><span class="line"><span class="keyword">const</span> elementVNode = &#123;</span><br><span class="line">  tag: <span class="string">'div'</span>,</span><br><span class="line">  data: <span class="literal">null</span>,</span><br><span class="line">  children: &#123;</span><br><span class="line">    tag: <span class="literal">null</span>,</span><br><span class="line">    data: <span class="literal">null</span>,</span><br><span class="line">    children: <span class="string">'文本内容'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Vnode描述抽象内容"><a href="#Vnode描述抽象内容" class="headerlink" title="Vnode描述抽象内容"></a>Vnode描述抽象内容</h4><p>上面说的是真实的dom，现在要描述虚拟的内容，例如一个组件</p>
+<p>首先加一个区分条件，区分真实dom与组件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> elementVNode = &#123;</span><br><span class="line">  tag: <span class="string">'div'</span>,</span><br><span class="line">  data: <span class="literal">null</span>,</span><br><span class="line">  children: &#123;</span><br><span class="line">    tag: MyComponent,  <span class="comment">//用了一个已经有的children里面的tag分开</span></span><br><span class="line">    data: <span class="literal">null</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="除了组件之外的抽象内容"><a href="#除了组件之外的抽象内容" class="headerlink" title="除了组件之外的抽象内容"></a>除了组件之外的抽象内容</h4><h5 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h5><p>代码片段Fragment，抽象一段代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*　&lt;template&gt;</span></span><br><span class="line"><span class="comment">  &lt;td&gt;&lt;/td&gt;</span></span><br><span class="line"><span class="comment">  &lt;td&gt;&lt;/td&gt;</span></span><br><span class="line"><span class="comment">  &lt;td&gt;&lt;/td&gt;</span></span><br><span class="line"><span class="comment">&lt;/template&gt;</span></span><br><span class="line"><span class="comment">将这个片段抽象出来　*/</span></span><br><span class="line"><span class="keyword">const</span> Fragment = <span class="built_in">Symbol</span>()</span><br><span class="line"><span class="keyword">const</span> fragmentVNode = &#123;</span><br><span class="line">  <span class="comment">// tag 属性值是一个唯一标识</span></span><br><span class="line">  tag: Fragment,</span><br><span class="line">  data: <span class="literal">null</span>,</span><br><span class="line">  children: [</span><br><span class="line">    &#123;</span><br><span class="line">      tag: <span class="string">'td'</span>,</span><br><span class="line">      data: <span class="literal">null</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      tag: <span class="string">'td'</span>,</span><br><span class="line">      data: <span class="literal">null</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      tag: <span class="string">'td'</span>,</span><br><span class="line">      data: <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以理解为与组件不同的抽象层次，互相包含</p>
+<p>如果我们的渲染器遇到了Fragment，就将这个东西的子节点全部渲染就行了</p>
+<h5 id="Portal"><a href="#Portal" class="headerlink" title="Portal"></a>Portal</h5><p>抽象protal的原因，是因为有些时候我们想这个节点脱离父子关系渲染，要提供这样的一个方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* &lt;template&gt;</span></span><br><span class="line"><span class="comment">  &lt;div id="box" style="z-index: -1;"&gt;</span></span><br><span class="line"><span class="comment">    &lt;Overlay /&gt;</span></span><br><span class="line"><span class="comment">  &lt;/div&gt;</span></span><br><span class="line"><span class="comment">&lt;/template&gt;</span></span><br><span class="line"><span class="comment">我这个overlay想渲染到#box外面</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&lt;template&gt;</span></span><br><span class="line"><span class="comment">  &lt;Portal target="#app-root"&gt;</span></span><br><span class="line"><span class="comment">    &lt;div class="overlay"&gt;&lt;/div&gt;</span></span><br><span class="line"><span class="comment">  &lt;/Portal&gt;</span></span><br><span class="line"><span class="comment">&lt;/template&gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Portal = <span class="built_in">Symbol</span>()</span><br><span class="line"><span class="keyword">const</span> portalVNode = &#123;</span><br><span class="line">  tag: Portal,</span><br><span class="line">  data: &#123;</span><br><span class="line">    target: <span class="string">'#app-root'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  children: &#123;</span><br><span class="line">    tag: <span class="string">'div'</span>,</span><br><span class="line">    data: &#123;</span><br><span class="line">      class: 'overlay'</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>意思就是设计一种特殊的tag，这个tag固定有一个参数target，遇到这种tag就将他的children渲染到他指定的target上面</p>
+<h2 id="Vnode的种类"><a href="#Vnode的种类" class="headerlink" title="Vnode的种类"></a>Vnode的种类</h2><p>根据我们上面的写法，分为五个嘛</p>
+<p><img src="https://s1.ax1x.com/2020/04/07/GcqYwt.png" alt="GcqYwt.png"></p>
+<p>这个keepalive后面会说</p>
+<h2 id="识别各种Vnode"><a href="#识别各种Vnode" class="headerlink" title="识别各种Vnode"></a>识别各种Vnode</h2><p>在哪个阶段辨别各种Vnode与怎么分辨与我们值得思考的地方</p>
+<p>vue2是这样区分vnode的</p>
+<ul>
+<li>拿到vnode后尝试去作为处理，如果成功，说明改vnode是组件的vnode</li>
+<li>不成功就去检查vnode.tag，有定义当普通标签</li>
+<li>没有tag检查是否为注释</li>
+<li>不是注释当文本</li>
+</ul>
+<p>问题是这个判断vue2加在了挂载（patch），只有到了挂载我才知道他是什么vnode，不太好优化</p>
+<p>我们可以直接多加个flags属性（可能对应为多种vnode），就不用每次都走这个判断拉，优化了一点</p>
+<p>那么我们的判断可以写出这种亚子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (flags &amp; VNodeFlags.ELEMENT) &#123;</span><br><span class="line">  <span class="comment">// VNode 是普通标签</span></span><br><span class="line">  mountElement(<span class="comment">/* ... */</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.COMPONENT) &#123;</span><br><span class="line">  <span class="comment">// VNode 是组件</span></span><br><span class="line">  mountComponent(<span class="comment">/* ... */</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (flags &amp; VNodeFlags.TEXT) &#123;</span><br><span class="line">  <span class="comment">// VNode 是纯文本</span></span><br><span class="line">  mountText(<span class="comment">/* ... */</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里用的是位运算，优化判断的速度，因为可能有大量的判断同时进行</span></span><br><span class="line"><span class="comment">// &amp;为运算AND,将两个变量二进制形式对齐比对  这里理解为根&amp;&amp;一样就行啦</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Flag枚举设计"><a href="#Flag枚举设计" class="headerlink" title="Flag枚举设计"></a>Flag枚举设计</h2><p>用枚举对象来命名flags</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> VNodeFlags = &#123;</span><br><span class="line">  <span class="comment">// html 标签</span></span><br><span class="line">  ELEMENT_HTML: <span class="number">1</span>,</span><br><span class="line">  <span class="comment">// SVG 标签</span></span><br><span class="line">  ELEMENT_SVG: <span class="number">1</span> &lt;&lt; <span class="number">1</span>,  <span class="comment">// 10 </span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 普通有状态组件</span></span><br><span class="line">  COMPONENT_STATEFUL_NORMAL: <span class="number">1</span> &lt;&lt; <span class="number">2</span>, <span class="comment">//100</span></span><br><span class="line">  <span class="comment">// 需要被keepAlive的有状态组件</span></span><br><span class="line">  COMPONENT_STATEFUL_SHOULD_KEEP_ALIVE: <span class="number">1</span> &lt;&lt; <span class="number">3</span>, <span class="comment">//1000</span></span><br><span class="line">  <span class="comment">// 已经被keepAlive的有状态组件</span></span><br><span class="line">  COMPONENT_STATEFUL_KEPT_ALIVE: <span class="number">1</span> &lt;&lt; <span class="number">4</span>, <span class="comment">//10000</span></span><br><span class="line">  <span class="comment">// 函数式组件</span></span><br><span class="line">  COMPONENT_FUNCTIONAL: <span class="number">1</span> &lt;&lt; <span class="number">5</span>, <span class="comment">//100000</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 纯文本</span></span><br><span class="line">  TEXT: <span class="number">1</span> &lt;&lt; <span class="number">6</span>, <span class="comment">//1000000</span></span><br><span class="line">  <span class="comment">// Fragment</span></span><br><span class="line">  FRAGMENT: <span class="number">1</span> &lt;&lt; <span class="number">7</span>, <span class="comment">//10000000</span></span><br><span class="line">  <span class="comment">// Portal</span></span><br><span class="line">  PORTAL: <span class="number">1</span> &lt;&lt; <span class="number">8</span> <span class="comment">//100000000</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里用了为运算，对应上面的判断哦，都是为了加快速度</span></span><br><span class="line"><span class="comment">// 可以看到都是直接用1位移不同位数得到的，根据这个特性有三个派生值，就是分类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> VNodeFlags = &#123; </span><br><span class="line">    <span class="comment">// html 和 svg 都是标签元素，可以用 ELEMENT 表示</span></span><br><span class="line">    VNodeFlags.ELEMENT = VNodeFlags.ELEMENT_HTML | VNodeFlags.ELEMENT_SVG</span><br><span class="line">    <span class="comment">// 1 | 10 = 11</span></span><br><span class="line">    <span class="comment">// 普通有状态组件、需要被keepAlive的有状态组件、已经被keepAlice的有状态组件 都是“有状态组件”，统一用 COMPONENT_STATEFUL 表示</span></span><br><span class="line">    VNodeFlags.COMPONENT_STATEFUL =</span><br><span class="line">      VNodeFlags.COMPONENT_STATEFUL_NORMAL |</span><br><span class="line">      VNodeFlags.COMPONENT_STATEFUL_SHOULD_KEEP_ALIVE |</span><br><span class="line">      VNodeFlags.COMPONENT_STATEFUL_KEPT_ALIVE</span><br><span class="line">    <span class="comment">// 000011100</span></span><br><span class="line">    <span class="comment">// 有状态组件 和  函数式组件都是“组件”，用 COMPONENT 表示</span></span><br><span class="line">    VNodeFlags.COMPONENT = VNodeFlags.COMPONENT_STATEFUL | VNodeFlags.COMPONENT_FUNCTIONAL</span><br><span class="line">    <span class="comment">// 000111100</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>插播位运算知识点复习</p>
+<p><a href="[https://lalaze.github.io/2020/04/07/js/js%E4%B8%AD%E7%9A%84%E4%BD%8D%E8%BF%90%E7%AE%97/#more](https://lalaze.github.io/2020/04/07/js/js中的位运算/#more)">js中的位运算</a>{:target=”_blank”}</p>
+<p>然后这些flagkey用于节点的flags属性判断他是什么节点了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子，判断他是否为vnode</span></span><br><span class="line"><span class="comment">// 使用按位与(&amp;)运算</span></span><br><span class="line">functionalComponentVnode.flags &amp; VNodeFlags.COMPONENT <span class="comment">// 真</span></span><br><span class="line">normalComponentVnode.flags &amp; VNodeFlags.COMPONENT <span class="comment">// 真</span></span><br><span class="line">htmlVnode.flags &amp; VNodeFlags.COMPONENT <span class="comment">// 假</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里的运算可以理解成</span></span><br><span class="line">functionalComponentVnode.flags &amp; VNodeFlags.COMPONENT_STATEFUL | VNodeFlags.COMPONENT_FUNCTIONAL </span><br><span class="line"><span class="comment">// 如果这个flags是他们其中的一个，就等于flags&amp;flags就抵掉了</span></span><br></pre></td></tr></table></figure>
+
+<p>这里是用了要判断的vnode的flag属性与上面的衍生属性&amp;了,为真才是那一个衍生属性下面的</p>
+<h2 id="children和ChildrenFlags"><a href="#children和ChildrenFlags" class="headerlink" title="children和ChildrenFlags"></a>children和ChildrenFlags</h2><p>我们计划用children属性来表示vnode之间的父子关系的话，我们想一下vnode的children有多少种情况</p>
+<ul>
+<li>没子节点</li>
+<li>只有一个子节点</li>
+<li>多个字节点<ul>
+<li>有key</li>
+<li>无key</li>
+</ul>
+</li>
+<li>不知道啥情况</li>
+</ul>
+<p>同样用一个childrenFlags来表示这些情况,跟上面那个同理的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ChildrenFlags = &#123;</span><br><span class="line">  <span class="comment">// 未知的 children 类型</span></span><br><span class="line">  UNKNOWN_CHILDREN: <span class="number">0</span>,</span><br><span class="line">  <span class="comment">// 没有 children</span></span><br><span class="line">  NO_CHILDREN: <span class="number">1</span>,</span><br><span class="line">  <span class="comment">// children 是单个 VNode</span></span><br><span class="line">  SINGLE_VNODE: <span class="number">1</span> &lt;&lt; <span class="number">1</span>,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// children 是多个拥有 key 的 VNode</span></span><br><span class="line">  KEYED_VNODES: <span class="number">1</span> &lt;&lt; <span class="number">2</span>,</span><br><span class="line">  <span class="comment">// children 是多个没有 key 的 VNode</span></span><br><span class="line">  NONE_KEYED_VNODES: <span class="number">1</span> &lt;&lt; <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  一样有派生节点  这个派生是判断是否为多个子节点的</span></span><br><span class="line">ChildrenFlags.MULTIPLE_VNODES = ChildrenFlags.KEYED_VNODES | ChildrenFlags.NONE_KEYED_VNODES</span><br></pre></td></tr></table></figure>
+
+<h2 id="Vnote的data属性"><a href="#Vnote的data属性" class="headerlink" title="Vnote的data属性"></a>Vnote的data属性</h2><p>data属性放的是data的数据</p>
+<p>不论他是组件还是普通节点，我们都可以用这个data来放他相关的数据</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通节点</span></span><br><span class="line">&#123;</span><br><span class="line">  flags: VNodeFlags.ELEMENT_HTML,</span><br><span class="line">  tag: <span class="string">'div'</span>,</span><br><span class="line">  data: &#123;</span><br><span class="line">    class: ['class-a', 'active'],</span><br><span class="line">    style: &#123;</span><br><span class="line">      background: <span class="string">'red'</span>,</span><br><span class="line">      color: <span class="string">'green'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 其他数据...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 组件的data</span></span><br><span class="line">&#123;</span><br><span class="line">  flags: VNodeFlags.COMPONENT_STATEFUL,</span><br><span class="line">  tag: <span class="string">'div'</span>,</span><br><span class="line">  data: &#123;</span><br><span class="line">    on: &#123;</span><br><span class="line">      <span class="string">'some-event'</span>: handler</span><br><span class="line">    &#125;,</span><br><span class="line">    propA: <span class="string">'1'</span></span><br><span class="line">    <span class="comment">// 其他数据...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="我们的Vnote"><a href="#我们的Vnote" class="headerlink" title="我们的Vnote"></a>我们的Vnote</h2><p>经过一顿操作，我们的Vnote变成了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> interface VNode &#123;</span><br><span class="line">  <span class="comment">// _isVNode 属性在上文中没有提到，它是一个始终为 true 的值，有了它，我们就可以判断一个对象是否是 VNode 对象</span></span><br><span class="line">  _isVNode: <span class="literal">true</span></span><br><span class="line">  <span class="comment">// el 属性在上文中也没有提到，当一个 VNode 被渲染为真实 DOM 之后，el 属性的值会引用该真实DOM</span></span><br><span class="line">  el: Element | <span class="literal">null</span></span><br><span class="line">  flags: VNodeFlags</span><br><span class="line">  tag: string | FunctionalComponent | ComponentClass | <span class="literal">null</span></span><br><span class="line">  data: VNodeData | <span class="literal">null</span></span><br><span class="line">  children: VNodeChildren</span><br><span class="line">  childFlags: ChildrenFlags</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>因为放网上了，还是放原链接</p>
+<p><a href="http://hcysun.me/vue-design/zh/" target="_blank" rel="noopener">http://hcysun.me/vue-design/zh/</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue/" rel="tag"># vue</a>
+          
+            <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+          
+            <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          
+            <a href="/tags/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/" rel="tag"># 框架设计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/06/css/heightauto/" rel="next" title="height:auto的理解">
+                <i class="fa fa-chevron-left"></i> height:auto的理解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/07/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/02.%E7%90%86%E8%A7%A3%E7%BB%84%E4%BB%B6/" rel="prev" title="理解组件">
+                理解组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#设计VNode"><span class="nav-number">1.</span> <span class="nav-text">设计VNode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vnode描述真实DOM"><span class="nav-number">1.1.</span> <span class="nav-text">Vnode描述真实DOM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vnode描述抽象内容"><span class="nav-number">1.1.1.</span> <span class="nav-text">Vnode描述抽象内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#除了组件之外的抽象内容"><span class="nav-number">1.1.2.</span> <span class="nav-text">除了组件之外的抽象内容</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Fragment"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Fragment</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Portal"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">Portal</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vnode的种类"><span class="nav-number">2.</span> <span class="nav-text">Vnode的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#识别各种Vnode"><span class="nav-number">3.</span> <span class="nav-text">识别各种Vnode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flag枚举设计"><span class="nav-number">4.</span> <span class="nav-text">Flag枚举设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#children和ChildrenFlags"><span class="nav-number">5.</span> <span class="nav-text">children和ChildrenFlags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vnote的data属性"><span class="nav-number">6.</span> <span class="nav-text">Vnote的data属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我们的Vnote"><span class="nav-number">7.</span> <span class="nav-text">我们的Vnote</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">42.4k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
