@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="面试,刷题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="来讲eventloop，众所周知，js是单线程的（起飞） 进程与线程线程与进程分别描述的是什么呢，其实他们描述的都是cpu对于任务的工作时间的概念 进程指的是运行指令以及保存上下文所需的时间，可以简单理解为一个程序，那就好理解了 线程理解为cpu 的一个核心，一个核心在同一时间内只能干一件事 浏览器渲染的过程中，如果ui渲染与js运行并列运行的话，他们其中一个可能会阻止另外一个的进行 单线程也是有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EventLoop">
+<meta property="og:url" content="http://yoursite.com/2020/05/04/%E9%9D%A2%E8%AF%95/yck-EventLoop/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="来讲eventloop，众所周知，js是单线程的（起飞） 进程与线程线程与进程分别描述的是什么呢，其实他们描述的都是cpu对于任务的工作时间的概念 进程指的是运行指令以及保存上下文所需的时间，可以简单理解为一个程序，那就好理解了 线程理解为cpu 的一个核心，一个核心在同一时间内只能干一件事 浏览器渲染的过程中，如果ui渲染与js运行并列运行的话，他们其中一个可能会阻止另外一个的进行 单线程也是有">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-EventLoop/Snipaste_2020-05-04_20-52-12.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588600406&Signature=2i92zjLYsZNxSD56%252FDXDVYwptnE%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-EventLoop/Snipaste_2020-05-04_21-17-30.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588601866&Signature=7W2J6zgwUUxqYDS%252Fkvu10Bq5fnU%253D">
+<meta property="article:published_time" content="2020-05-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-05-06T09:02:12.652Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="刷题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-EventLoop/Snipaste_2020-05-04_20-52-12.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588600406&Signature=2i92zjLYsZNxSD56%252FDXDVYwptnE%253D">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/04/面试/yck-EventLoop/"/>
+
+
+
+
+
+  <title>EventLoop | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/04/%E9%9D%A2%E8%AF%95/yck-EventLoop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EventLoop</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-04T00:00:00+08:00">
+                2020-05-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  819
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>来讲eventloop，众所周知，js是单线程的（起飞）</p>
+<h2 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h2><p>线程与进程分别描述的是什么呢，其实他们描述的都是cpu对于任务的工作时间的概念</p>
+<p>进程指的是运行指令以及保存上下文所需的时间，可以简单理解为一个程序，那就好理解了</p>
+<p>线程理解为cpu 的一个核心，一个核心在同一时间内只能干一件事</p>
+<p>浏览器渲染的过程中，如果ui渲染与js运行并列运行的话，他们其中一个可能会阻止另外一个的进行</p>
+<p>单线程也是有一点好处的</p>
+<ul>
+<li>节约内存</li>
+<li>加快切换上下文的时间</li>
+<li>没有锁的问题</li>
+</ul>
+<h2 id="执行栈"><a href="#执行栈" class="headerlink" title="执行栈"></a>执行栈</h2><p>这个看过好多次了，就是函数执行的栈结果，先进后出，直到所有函数执行完</p>
+<p>平时chrome报错弹得也是栈报错</p>
+<p>注意栈是会爆的，还是要注意一下栈的大小</p>
+<h2 id="浏览器的EventLoop"><a href="#浏览器的EventLoop" class="headerlink" title="浏览器的EventLoop"></a>浏览器的EventLoop</h2><p>知道什么是执行栈之后，我们就可以来看EvetnLoop了</p>
+<p>因为js是单线程的嘛，我在执行栈中遇到了异步代码怎么办？</p>
+<p>js会将栈中的任务挂起，放在task（队列）中，到我当前栈中没有了要执行的代码，他就会从task中拿任务出来执行的了</p>
+<p>这么看js本质上是单线程同步的，不过代码执行顺序不一样</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-EventLoop/Snipaste_2020-05-04_20-52-12.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588600406&Signature=2i92zjLYsZNxSD56%2FDXDVYwptnE%3D" alt=""></p>
+<p>任务可以分为微任务与宏任务，es6中，微任务称为jobs，macrotsk称为task</p>
+<p>这里有一个说明我们正常写的代码的时候触发的例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'script start'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> async2()</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'async1 end'</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'async2 end'</span>)</span><br><span class="line">&#125;</span><br><span class="line">async1()</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'Promise'</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;)</span><br><span class="line">  .then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'promise1'</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'promise2'</span>)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'script end'</span>)</span><br><span class="line"><span class="comment">// script start =&gt; async2 end =&gt; Promise =&gt; script end =&gt; promise1 =&gt; promise2 =&gt; async1 end =&gt; setTimeout</span></span><br></pre></td></tr></table></figure>
+
+<p>怎么理解这个顺序呢，执行async的时候，没有await的就普通执行，当遇到await，就可以当做是让出线程的标志，然后跟后面的两个then相比，是我先进队列的，所以同步完之后是我先执行，然后再到两个then，最后到排在最后的setTimeout</p>
+<p>总结EventLoop的执行顺序</p>
+<ul>
+<li>先执行同步代码，称为宏任务</li>
+<li>执行栈为空，查询是否有异步代码执行，称为微任务</li>
+<li>执行异步代码</li>
+<li>查询是否要渲染页面</li>
+<li>一个宏任务执行完了，执行宏任务的回调setTimeout，然后到下一轮</li>
+</ul>
+<p>宏微的分别我目前认为是这个代码是否异步的，可以理解为主任务与压后的任务</p>
+<h2 id="Node中的EvetnLoop"><a href="#Node中的EvetnLoop" class="headerlink" title="Node中的EvetnLoop"></a>Node中的EvetnLoop</h2><p>Node中改写了EventLoop，跟浏览器的不一样了</p>
+<p>Node中的EventLoop分为6个阶段，会按照顺序反复执行</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-EventLoop/Snipaste_2020-05-04_21-17-30.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588601866&Signature=7W2J6zgwUUxqYDS%2Fkvu10Bq5fnU%3D" alt=""></p>
+<ul>
+<li>timer：执行setTimeout与setInterval回调，一样不是准确按照执行的</li>
+<li>IO：做上一轮io操作的回调</li>
+<li>idle、prepare</li>
+<li>poll：回到timer节点执行还能，执行io回调</li>
+<li>执行setImmeiate</li>
+<li>close callback：执行close事件</li>
+</ul>
+<p>这一篇说node的部分有点迷糊，建议还是要找其他文章一起看</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+            <a href="/tags/%E5%88%B7%E9%A2%98/" rel="tag"># 刷题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/04/%E9%9D%A2%E8%AF%95/yck-%E8%BE%93%E5%85%A5url%E9%A1%B5%E9%9D%A2%E7%9A%84%E6%95%B4%E4%B8%AA%E6%B5%81%E7%A8%8B/" rel="next" title="输入url到页面渲染出来的整个柳橙">
+                <i class="fa fa-chevron-left"></i> 输入url到页面渲染出来的整个柳橙
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/06/%E9%9D%A2%E8%AF%95/yck-UDP%E4%B8%8ETCP/" rel="prev" title="UDP与TCP">
+                UDP与TCP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程与线程"><span class="nav-number">1.</span> <span class="nav-text">进程与线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行栈"><span class="nav-number">2.</span> <span class="nav-text">执行栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器的EventLoop"><span class="nav-number">3.</span> <span class="nav-text">浏览器的EventLoop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Node中的EvetnLoop"><span class="nav-number">4.</span> <span class="nav-text">Node中的EvetnLoop</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">48.1k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

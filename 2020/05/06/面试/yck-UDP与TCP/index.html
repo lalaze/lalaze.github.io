@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="面试,刷题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="说是网络工程师，其实最弱的也是这部分，不过因为平常工作中不用，那也是没有办法滴 UDPudp的特点  面向无连接的，传输数据前双方不用建立连接 只是数据搬运，不能保证数据有序不丢失传输到 没有让控制流量的算法  面向无连接这个特点使得udp很轻便，不用建立连接，想发就发的 同时也只是搬运数据，不会对报文做任何的处理  在发送端，应用层将数据传递给传输层的UDP协议，UDP协议只会增加一个UDP的标">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UDP与TCP">
+<meta property="og:url" content="http://yoursite.com/2020/05/06/%E9%9D%A2%E8%AF%95/yck-UDP%E4%B8%8ETCP/index.html">
+<meta property="og:site_name" content="lalaze的笔记">
+<meta property="og:description" content="说是网络工程师，其实最弱的也是这部分，不过因为平常工作中不用，那也是没有办法滴 UDPudp的特点  面向无连接的，传输数据前双方不用建立连接 只是数据搬运，不能保证数据有序不丢失传输到 没有让控制流量的算法  面向无连接这个特点使得udp很轻便，不用建立连接，想发就发的 同时也只是搬运数据，不会对报文做任何的处理  在发送端，应用层将数据传递给传输层的UDP协议，UDP协议只会增加一个UDP的标">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-udptcp/Snipaste_2020-05-06_21-07-21.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588774059&Signature=GZf3Bi2xNA5ZXvhJbcoMkT6d9ok%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-udptcp/Snipaste_2020-05-06_21-07-10.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588774152&Signature=xil8vzc2c%252FPuSErnhELbUUwuLXs%253D">
+<meta property="article:published_time" content="2020-05-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-05-14T08:28:57.418Z">
+<meta property="article:author" content="lalaze">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="刷题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-udptcp/Snipaste_2020-05-06_21-07-21.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588774059&Signature=GZf3Bi2xNA5ZXvhJbcoMkT6d9ok%253D">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/06/面试/yck-UDP与TCP/"/>
+
+
+
+
+
+  <title>UDP与TCP | lalaze的笔记</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+      <div class="site-meta-headline">
+        <a>
+          <img class="custom-logo-image" src="https://s1.ax1x.com/2020/04/02/GJHguq.jpg"
+               alt="lalaze的笔记"/>
+        </a>
+      </div>
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lalaze的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/06/%E9%9D%A2%E8%AF%95/yck-UDP%E4%B8%8ETCP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lalaze">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lalaze的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UDP与TCP</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-06T00:00:00+08:00">
+                2020-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>说是网络工程师，其实最弱的也是这部分，不过因为平常工作中不用，那也是没有办法滴</p>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><p>udp的特点</p>
+<ul>
+<li>面向无连接的，传输数据前双方不用建立连接</li>
+<li>只是数据搬运，不能保证数据有序不丢失传输到</li>
+<li>没有让控制流量的算法</li>
+</ul>
+<h3 id="面向无连接"><a href="#面向无连接" class="headerlink" title="面向无连接"></a>面向无连接</h3><p>这个特点使得udp很轻便，不用建立连接，想发就发的</p>
+<p>同时也只是搬运数据，不会对报文做任何的处理</p>
+<ul>
+<li>在发送端，应用层将数据传递给传输层的UDP协议，UDP协议只会增加一个UDP的标识头，然后就给网络层了</li>
+<li>接收端，网络层将数据给传输层，UDP只是去除ip报文头然后就会给应用层，不会做任何操作</li>
+</ul>
+<h3 id="不可靠性"><a href="#不可靠性" class="headerlink" title="不可靠性"></a>不可靠性</h3><p>这是无连接带来的，啥都管乱发肯定出事</p>
+<p>对于发送方，我想什么时候发就发，也不会备份数据，也不关心对方会不会接受到</p>
+<p>在传输的过程来说，udp没有拥塞机制，会以恒定的速度发送数据，即使网络条件不好，也不会调整发送速的，所以可能会丢数据</p>
+<h3 id="高效"><a href="#高效" class="headerlink" title="高效"></a>高效</h3><p>这也是无连接带来的，因为没有连接建立，所以如果网络良好，传输数据会十分快，因此某些实时性要求高的场景例如直播、会议等都是用的udp</p>
+<p>除了无连接，还有一个是因为udp头的开销小，只有八字节，也会提高传输速度</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-udptcp/Snipaste_2020-05-06_21-07-21.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588774059&Signature=GZf3Bi2xNA5ZXvhJbcoMkT6d9ok%3D" alt=""></p>
+<p>udp头部包含的数据</p>
+<ul>
+<li>两个十六位的端口号，分为源端口与目标端口</li>
+<li>整个数据报文的长度</li>
+<li>整个数据报文的检验和ipv4的可选字段</li>
+</ul>
+<h3 id="传输方式"><a href="#传输方式" class="headerlink" title="传输方式"></a>传输方式</h3><p>不止一对一，可以一对多，多对多，多对一</p>
+<h3 id="适合应用的场景"><a href="#适合应用的场景" class="headerlink" title="适合应用的场景"></a>适合应用的场景</h3><p>前面说的，直播视频，电话会议，有一些低延迟要求的游戏都是用的udp</p>
+<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><p>tcp与udp最大的区别就是我tcp是要握手建立连接的，并且通过各种算法保证我tcp数据的可靠性，当然就慢啦</p>
+<p>tcp保证这些是通过几个方面的</p>
+<h3 id="头部"><a href="#头部" class="headerlink" title="头部"></a>头部</h3><p>他的头部有几个字段</p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/%E9%9D%A2%E8%AF%95/yck-udptcp/Snipaste_2020-05-06_21-07-10.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588774152&Signature=xil8vzc2c%2FPuSErnhELbUUwuLXs%3D" alt=""></p>
+<p>只写重要的哈</p>
+<ul>
+<li>sequence number：保证tcp传输报文的有序</li>
+<li>Acknowlwdgement Number：表示期望接受的下一个字节的编号是多少，有时候也会表示上一个序号的数据已经收到</li>
+<li>Window Size：窗口大小，用于流量控制</li>
+<li>标识符<ul>
+<li>URG=1：表示本数据报的数据部分包含紧急信息，是一个高优先级的数据报文</li>
+<li>ACK=1：表示确认字段有序，建立连接后的所有报文的ACK都是一</li>
+<li>PSH=1：表示接收端接收到这段数据后应该立马push给应用层，而不是等到缓冲区满了再提交</li>
+<li>RST=1：表示当前TCP连接出现严重问题，需要重新建立TCP连接，也可以用来拒绝非法的报文，或者表示我拒绝连接请求</li>
+<li>SYN=1：这个为1且ACK=0时，表示当前报文是一个连接请求报文，当这个为1ACK=1时候，表示当前报文是一个同意建立连接的应答报文</li>
+<li>FIN=1：表示该报文字段是一个释放连接的请求报文</li>
+</ul>
+</li>
+</ul>
+<h3 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h3><p>接下来是重头戏，三次握手，还有一个指标RTT，表示发送端发送数据到接收到对端数据的往返时间</p>
+<p>首页要明确tcp是全双工的（就是建立连接后客户端与服务端是可以互相发数据的</p>
+<p>握手中是有几个状态的，一开始大家都是closed状态，然后建立tcb，建立tcb然后进入listen状态，等待客户端发送数据</p>
+<h4 id="第一次握手"><a href="#第一次握手" class="headerlink" title="第一次握手"></a>第一次握手</h4><p>客服端想服务器发送请求报文段，包含客户端的数据通讯序列初始序号，发送玩客户端进入syn-received状态</p>
+<h4 id="第二次握手"><a href="#第二次握手" class="headerlink" title="第二次握手"></a>第二次握手</h4><p>服务端向客户端发送同意连接，客户端收到后发送应答，应答找包含自身数据通信初始序号，发送完成进入syn-received状态</p>
+<h4 id="第三次握手"><a href="#第三次握手" class="headerlink" title="第三次握手"></a>第三次握手</h4><p>服务端又回了一个同意应答，然后再发一个确认报文，发送完就进入established状态，服务端收到应答也会进入同一状态，然后连接已经建立</p>
+<p>这个第三次握手可以发一点数据，一般通过TFO（快速打开）实现，一般这种情况是发cookie，有cookiekey减少RTT</p>
+<h3 id="为什么要三次握手"><a href="#为什么要三次握手" class="headerlink" title="为什么要三次握手"></a>为什么要三次握手</h3><p>这么麻烦本质都是为了连接的时候不出错嘛</p>
+<p>假设客户端发送了一个请求a，因为网络原因造成了超时，这是tcp会启动重传机制发送一个请求b，结果a其实发出了，但是b先去了，因为a卡住了，b建立了连接，连接完他们释放了，这个时候卡这的a又出来了，服务器接到a以为客户端来了，他就会启动等待状态，结果客服端这时候已经close了，服务器空等</p>
+<p>第三次握手可以避免这种情况，只有我接到两个确认我服务器才认为你是真的想建立连接</p>
+<p>同时在连接中任何一方掉线，tcp都会尝试五次重发syn包</p>
+<h2 id="断开连接的四次握手"><a href="#断开连接的四次握手" class="headerlink" title="断开连接的四次握手"></a>断开连接的四次握手</h2><p>断开连接也要四次握手，没想到吧</p>
+<h3 id="第一次握手-1"><a href="#第一次握手-1" class="headerlink" title="第一次握手"></a>第一次握手</h3><p>客户端a认为我已经收到数据啦，向服务端b发送链接释放请求</p>
+<h3 id="第二次握手-1"><a href="#第二次握手-1" class="headerlink" title="第二次握手"></a>第二次握手</h3><p>b收到释放请求，告诉应用端释放tcp，发送ack包，自己进入closewait状态，我不收a的数据了，但是b还是可以发数据给a，a没断嘛</p>
+<h3 id="第三次握手-1"><a href="#第三次握手-1" class="headerlink" title="第三次握手"></a>第三次握手</h3><p>这个时候服务端还是可以发数据的，他会继续发完，b发完了，会向a发释放请求，b自己进入last-ack状态</p>
+<h3 id="第四次握手"><a href="#第四次握手" class="headerlink" title="第四次握手"></a>第四次握手</h3><p>a收到释放请求，向b发送确认应答，自己进入time-wait状态（一般等2msl），会持续xmsl，如过b都没用相应的话，进入closed，b自己收到确认应答，也会进入clsoe</p>
+<h3 id="为什么要等一会再close"><a href="#为什么要等一会再close" class="headerlink" title="为什么要等一会再close"></a>为什么要等一会再close</h3><p>我们等了2msl，2msl是一个报文在网络中的生存最大时间，超过这个时间这个报文在网络中是没有的了（为什么没有，别问我，我也不知道），怕的是关闭的确认应答卡住了，b一直不能关闭，所以等一会b收到，再自己close</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+            <a href="/tags/%E5%88%B7%E9%A2%98/" rel="tag"># 刷题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/04/%E9%9D%A2%E8%AF%95/yck-EventLoop/" rel="next" title="EventLoop">
+                <i class="fa fa-chevron-left"></i> EventLoop
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/07/%E9%9D%A2%E8%AF%95/%E6%95%B0%E7%BB%84%E7%94%9F%E6%88%90%E6%A0%91%E7%BB%93%E6%9E%84/" rel="prev" title="数组生成树结构">
+                数组生成树结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="lalaze" />
+            
+              <p class="site-author-name" itemprop="name">lalaze</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lalaze" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="81614285@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP"><span class="nav-number">1.</span> <span class="nav-text">UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#面向无连接"><span class="nav-number">1.1.</span> <span class="nav-text">面向无连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不可靠性"><span class="nav-number">1.2.</span> <span class="nav-text">不可靠性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高效"><span class="nav-number">1.3.</span> <span class="nav-text">高效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传输方式"><span class="nav-number">1.4.</span> <span class="nav-text">传输方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#适合应用的场景"><span class="nav-number">1.5.</span> <span class="nav-text">适合应用的场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-number">2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#头部"><span class="nav-number">2.1.</span> <span class="nav-text">头部</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态"><span class="nav-number">2.2.</span> <span class="nav-text">状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一次握手"><span class="nav-number">2.2.1.</span> <span class="nav-text">第一次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第二次握手"><span class="nav-number">2.2.2.</span> <span class="nav-text">第二次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三次握手"><span class="nav-number">2.2.3.</span> <span class="nav-text">第三次握手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要三次握手"><span class="nav-number">2.3.</span> <span class="nav-text">为什么要三次握手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#断开连接的四次握手"><span class="nav-number">3.</span> <span class="nav-text">断开连接的四次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一次握手-1"><span class="nav-number">3.1.</span> <span class="nav-text">第一次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二次握手-1"><span class="nav-number">3.2.</span> <span class="nav-text">第二次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三次握手-1"><span class="nav-number">3.3.</span> <span class="nav-text">第三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四次握手"><span class="nav-number">3.4.</span> <span class="nav-text">第四次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要等一会再close"><span class="nav-number">3.5.</span> <span class="nav-text">为什么要等一会再close</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lalaze</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">48.1k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

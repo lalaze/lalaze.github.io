@@ -85,18 +85,18 @@
 <meta property="og:url" content="http://yoursite.com/2020/04/09/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/08.%E6%B8%B2%E6%9F%93%E5%99%A8patch/index.html">
 <meta property="og:site_name" content="lalaze的笔记">
 <meta property="og:description" content="ptach原则提高性能的关键patch步骤，对比新旧vnode，以最合适的方式更新dom 回头看看我们的渲染器代码先 12345678910111213141516171819202122function render(vnode, container) &amp;#123;  const prevVNode &#x3D; container.vnode  if (prevVNode &#x3D;&#x3D; null) &amp;#123;">
-<meta property="og:image" content="https://s1.ax1x.com/2020/04/09/G5k7fP.png">
-<meta property="og:image" content="https://s1.ax1x.com/2020/04/09/G5A4jU.png">
-<meta property="og:image" content="https://s1.ax1x.com/2020/04/09/G5EaVJ.png">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5k7fP.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221866&Signature=t3xxVnHShAIMmHZsVRC%252Bol9v0co%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5A4jU.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221898&Signature=5SHkLC8YYZs42g42AfQaZakxbnE%253D">
+<meta property="og:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5EaVJ.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221955&Signature=bOxETgeqzHKQAnIsVl3GEvd6mp0%253D">
 <meta property="article:published_time" content="2020-04-08T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-04-25T06:13:38.794Z">
+<meta property="article:modified_time" content="2020-04-30T03:46:08.238Z">
 <meta property="article:author" content="lalaze">
 <meta property="article:tag" content="vue">
 <meta property="article:tag" content="源码">
 <meta property="article:tag" content="读书笔记">
 <meta property="article:tag" content="框架设计">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s1.ax1x.com/2020/04/09/G5k7fP.png">
+<meta name="twitter:image" content="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5k7fP.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221866&Signature=t3xxVnHShAIMmHZsVRC%252Bol9v0co%253D">
 
 
 
@@ -424,9 +424,9 @@
 <p>其实这里就是ifelse大法，不过用switch代替了好看点，一共有9种情况</p>
 <p>然后我们来填中间的内容</p>
 <p>各情况分类讨论</p>
-<p><img src="https://s1.ax1x.com/2020/04/09/G5k7fP.png" alt="G5k7fP.png"></p>
-<p><a href="https://imgchr.com/i/G5A4jU" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2020/04/09/G5A4jU.png" alt="G5A4jU.png"></a></p>
-<p><img src="https://s1.ax1x.com/2020/04/09/G5EaVJ.png" alt="G5EaVJ.png"></p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5k7fP.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221866&Signature=t3xxVnHShAIMmHZsVRC%2Bol9v0co%3D" alt="G5k7fP.png"></p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5A4jU.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221898&Signature=5SHkLC8YYZs42g42AfQaZakxbnE%3D" alt="G5A4jU.png"></p>
+<p><img src="http://zezeze-note.oss-cn-hongkong.aliyuncs.com/%E7%AC%94%E8%AE%B0%E6%88%AA%E5%9B%BE/vue%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/06%E6%B8%B2%E6%9F%93%E5%99%A8patch/G5EaVJ.png?OSSAccessKeyId=LTAI4GCeVHegRoadhkK6mc12&Expires=1588221955&Signature=bOxETgeqzHKQAnIsVl3GEvd6mp0%3D" alt="G5EaVJ.png"></p>
 <p>最最核心的其实是在后面的diff，是关键</p>
 <p>具体实现看代码</p>
 <h2 id="更新文本节点"><a href="#更新文本节点" class="headerlink" title="更新文本节点"></a>更新文本节点</h2><p>这个好做，直接将他的文本换成新的文本就行了</p>
@@ -644,7 +644,7 @@
               
                 <a href="/archives%7C%7C%20archive">
               
-                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-count">56</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -749,7 +749,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">42.4k</span>
+    <span title="Site words total count">48.1k</span>
   
 </div>
 
